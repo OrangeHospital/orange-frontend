@@ -1,0 +1,151 @@
+import { fetchSuccessStories } from "@/lib/api";
+import Link from "next/link";
+import type { Metadata } from "next";
+import Image from "next/image";
+
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Pediatric & Neonatal Success Stories - Orange Children Hospital",
+  description:
+    "Read inspiring stories of critical neonatal and pediatric survival under our Level 3 NICU and PICU team at Orange Children Hospital, Ahmedabad.",
+  alternates: {
+    canonical: "https://orangechildrenhospital.com/success-stories",
+  },
+  openGraph: {
+    title: "Pediatric & Neonatal Success Stories - Orange Children Hospital",
+    description:
+      "Read inspiring stories of critical neonatal and pediatric survival under our Level 3 NICU and PICU team.",
+    url: "https://orangechildrenhospital.com/success-stories",
+    siteName: "Orange Hospital",
+    locale: "en",
+    type: "website",
+  },
+};
+
+export default async function SuccessStoriesPage() {
+  let stories: SuccessStory[] = [];
+  let errorMsg = "";
+
+  try {
+    const response = await fetchSuccessStories();
+
+    if (response && response.success && Array.isArray(response.data)) {
+      stories = response.data.filter((s) => s.status === 1);
+    }
+  } catch (error) {
+    console.error("Error loading success stories:", error);
+    errorMsg = "Unable to fetch stories. Please try again later.";
+  }
+
+  return (
+    <main className="min-h-screen bg-[#F7FAFC]">
+      {/* Dynamic Visual Banner Section */}
+      <section className="bg-slate-900 text-white py-12 px-6 sm:px-8 relative overflow-hidden ">
+        {/* Subtle decorative elements */}
+        <div className="absolute right-0 top-0 w-96 h-96 bg-[#F7A707]/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute left-10 bottom-0 w-72 h-72 bg-[#2B6CB0]/15 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto flex flex-col items-center text-center relative z-10">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#F7A707] font-semibold mb-3">
+            <span>Orange Children Hospital</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#F7A707]" />
+            <span>Success Stories</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white tracking-tight leading-tight max-w-4xl">
+            Success Stories
+          </h1>
+          <p className="mt-4 text-base sm:text-lg text-slate-300 max-w-4xl leading-relaxed">
+            It requires more than just knowledge or medical practice when it
+            comes to child health care. Our team of expert doctors approaches
+            every child and their health problems with the utmost care, starting
+            from the child’s treatment to easing the medical environment so that
+            our little patients don’t get nervous and enjoy every moment of
+            their journey with us. Orange hospital is where years of medical
+            experience meet with compassion for children. Our doctors’ bond with
+            their patients is not only limited to the treatment; they establish
+            a bond of companionship with them, and here is where we stand out.
+          </p>
+        </div>
+      </section>
+
+      {/* Main Grid Content */}
+      <section className="py-16 px-6 sm:px-8 lg:px-16 max-w-7xl mx-auto">
+        {errorMsg ? (
+          <div className="text-center py-20 bg-white rounded-3xl border border-slate-100 shadow-sm max-w-md mx-auto">
+            <p className="text-slate-600 font-medium mb-3">{errorMsg}</p>
+            <Link
+              href="/"
+              className="inline-flex items-center text-[#F7A707] hover:underline text-sm font-semibold"
+            >
+              « Back to Home
+            </Link>
+          </div>
+        ) : stories.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-12">
+            {stories.map((s) => {
+              return (
+                <div
+                  key={s.id}
+                  className="bg-white flex flex-col rounded-none overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 border border-slate-200 transition-all duration-300 group"
+                >
+                  {/* Card Image area - blank if no image */}
+                  <div className="relative aspect-[4/3] w-full bg-slate-100 overflow-hidden flex items-center justify-center">
+                    {s.featuredImage ? (
+                      <Image
+                        src={s.featuredImage}
+                        alt={s.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-slate-100" />
+                    )}
+                  </div>
+
+                  {/* Card Info Section */}
+                  <div className="p-6 flex flex-col flex-grow text-left">
+                    <h3 className="text-lg font-bold text-[#2B6CB0] group-hover:text-[#1A365D] uppercase tracking-wide leading-snug transition-colors duration-200 mb-3 min-h-[3.5rem] flex items-start">
+                      <Link href={`/success-stories/${s.slug}`}>{s.name}</Link>
+                    </h3>
+
+                    <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-grow">
+                      {s.sortDescription || ""}
+                    </p>
+
+                    <div className="mt-auto">
+                      <Link
+                        href={`/success-stories/${s.slug}`}
+                        className="inline-flex items-center text-[#48BB78] hover:text-[#38A169] text-sm font-bold uppercase tracking-wider transition-colors duration-200"
+                      >
+                        Read More »
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-24 bg-white rounded-3xl border border-slate-100 shadow-sm">
+            <svg
+              className="mx-auto h-12 w-12 text-slate-300 mb-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
+              />
+            </svg>
+            <p className="text-slate-500 font-medium">
+              No success stories available at the moment.
+            </p>
+          </div>
+        )}
+      </section>
+    </main>
+  );
+}

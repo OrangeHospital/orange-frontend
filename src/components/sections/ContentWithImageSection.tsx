@@ -24,8 +24,10 @@ export default function ContentWithImageSection({
         >
           {/* Image Side */}
           <div className="w-full lg:w-1/2">
-            <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl aspect-[4/3] border-8 border-white bg-slate-200">
-              {data.image ? (
+            <div className="relative overflow-hidden aspect-[4/3] rounded-2xl bg-slate-200">
+              {data.image?.fileUrl &&
+              (data.image.fileUrl.startsWith("/") ||
+                data.image.fileUrl.startsWith("http")) ? (
                 <Image
                   src={data.image.fileUrl}
                   alt={
@@ -34,7 +36,7 @@ export default function ContentWithImageSection({
                     "Orange Hospital Infrastructure"
                   }
                   fill
-                  className="object-cover transition-transform duration-500 hover:scale-103"
+                  className="object-cover "
                   quality={90}
                 />
               ) : (

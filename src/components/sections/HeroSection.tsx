@@ -1,98 +1,170 @@
-import { Button } from "../button";
+"use client";
+
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import { fetchSocial } from "@/lib/api";
 
 interface HeroSectionProps {
   data: PageSection["content"];
   lang?: string;
 }
 
-export default function HeroSection({ data, lang = "en" }: HeroSectionProps) {
-  const media = data.image;
+export default function HeroSection({ data }: HeroSectionProps) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [socials, setSocials] = useState<Social[]>([]);
+
+  useEffect(() => {
+    async function loadSocials() {
+      try {
+        const fetchedSocials = await fetchSocial();
+        setSocials(fetchedSocials || []);
+      } catch {
+        setSocials([]);
+      }
+    }
+    loadSocials();
+  }, []);
+
+  const getSocials = (key: string): string => {
+    return socials.find((item) => item.socialKey === key)?.socialValue || "#";
+  };
+
+  // Robust array of slides using real assets from the project
+  const slides = [
+    {
+      titlePrefix: "Ensure the good health of your little angels with",
+      titleHighlight: "ORANGE HOSPITAL",
+      subtitle: data.subtitle || "Neonatal & Pediatric Intensive Care Unit",
+      image: "/hero_baby.png",
+      primaryCta: data.primaryCta || {
+        label: "Book Appointment",
+        href: "/contact",
+      },
+      secondaryCta: data.secondaryCta || {
+        label: "Our Facilities",
+        href: "/facilities",
+      },
+    },
+    {
+      titlePrefix: "State-of-the-Art level 3 newborn care at",
+      titleHighlight: "LEVEL 3 NICU & PICU",
+      subtitle:
+        "Gujarat's premier 50-bedded critical care facility for infants & children",
+      image: "/nicu_expertise.png",
+      primaryCta: data.primaryCta || {
+        label: "Book Appointment",
+        href: "/contact",
+      },
+      secondaryCta: data.secondaryCta || {
+        label: "Our Facilities",
+        href: "/facilities",
+      },
+    },
+    {
+      titlePrefix: "Equipped with advanced medical infrastructure and",
+      titleHighlight: "MODERN INFRASTRUCTURE",
+      subtitle:
+        "First-of-its-kind isolated pediatric dialysis unit and cooling devices",
+      image: "/icu_infrastructure.png",
+      primaryCta: data.primaryCta || {
+        label: "Book Appointment",
+        href: "/contact",
+      },
+      secondaryCta: data.secondaryCta || {
+        label: "Our Facilities",
+        href: "/facilities",
+      },
+    },
+  ];
+
+  // Auto-play every 5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [slides.length]);
 
   return (
-    <section className="relative w-full min-h-[85vh] flex items-center overflow-hidden bg-slate-950 text-white py-20 lg:py-24">
-      {/* Background Image with sophisticated overlay */}
-      {media && (
-        <div className="absolute inset-0 z-0">
-          <Image
-            src={media.fileUrl}
-            alt={media.altText || data.title || "Orange Hospital Hero"}
-            fill
-            className="object-cover object-center opacity-90"
-            priority
-            quality={95}
-          />
-          {/* Gradients to merge seamlessly and provide excellent text readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/80 via-slate-950/50 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
-        </div>
-      )}
+    <section className="relative w-full h-[75vh] md:h-[80vh] lg:h-[85vh] min-h-[500px] md:min-h-[600px] overflow-hidden bg-slate-900">
+      {/* Slides Container with Hardware-Accelerated Cross-fade */}
+      <div className="absolute inset-0 w-full h-full">
+        {slides.map((slide, index) => {
+          const isActive = index === activeIndex;
+          return (
+            <div
+              key={index}
+              className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${
+                isActive
+                  ? "opacity-100 z-10"
+                  : "opacity-0 z-0 pointer-events-none"
+              }`}
+            >
+              {/* Background Image with horizontal gradient for maximum legibility */}
+              <div className="absolute inset-0">
+                <Image
+                  src={slide.image}
+                  alt={slide.titleHighlight}
+                  fill
+                  priority={index === 0}
+                  className="object-cover object-center"
+                  quality={95}
+                />
+                {/* Horizontal Gradient Overlay for text contrast */}
+                <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-transparent z-10" />
+                {/* Subtle bottom vignette to blend sections */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent z-10" />
+              </div>
 
-      <div className="container relative z-10 mx-auto px-6 max-w-7xl">
-        <div className="max-w-3xl animate-in fade-in slide-in-from-bottom-8 duration-700">
-          {/* Badge */}
-          {data.badge && (
-            <div className="inline-flex items-center gap-2 px-4 py-2 mb-6 border border-white/20 rounded-full bg-white/10 backdrop-blur-sm text-sm font-semibold tracking-wide text-primary">
-              <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
-              {data.badge.label}
+              {/* Content Box */}
+              <div className="container relative z-20 mx-auto px-6 lg:px-8 h-full flex items-center max-w-7xl">
+                <div className="max-w-md md:max-w-lg lg:max-w-xl text-left">
+                  {/* Title (Clean Sans-Serif font, weight regular for prefix and semi-bold for hospital name) */}
+                  <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-light leading-[1.3] text-white tracking-wide">
+                    {slide.titlePrefix}{" "}
+                    <span className="block font-semibold text-white mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+                      {slide.titleHighlight}
+                    </span>
+                  </h1>
+                </div>
+              </div>
             </div>
-          )}
-
-          {/* Heading */}
-          <h1 className="mb-6 text-4xl font-extrabold leading-[1.15] tracking-tight md:text-6xl lg:text-7xl drop-shadow-md text-white font-sans">
-            {data.title}
-          </h1>
-
-          {/* Subtitle */}
-          {data.subtitle && (
-            <p className="mb-10 text-lg text-gray-200 md:text-xl lg:text-2xl leading-relaxed max-w-2xl font-light">
-              {data.subtitle}
-            </p>
-          )}
-
-          {/* CTAs */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            {data.primaryCta && (
-              <Button
-                href={data.primaryCta.href}
-                variant="primary"
-                size="lg"
-                lang={lang}
-                className="min-w-[200px] shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-shadow bg-primary text-white hover:bg-primary-dark rounded-full font-semibold"
-              >
-                {data.primaryCta.label}
-              </Button>
-            )}
-            {data.secondaryCta && (
-              <Button
-                href={data.secondaryCta.href}
-                size="lg"
-                lang={lang}
-                className="min-w-[200px] bg-white/10 border border-white/30 text-white hover:bg-white hover:text-slate-900 transition-all rounded-full backdrop-blur-sm font-semibold"
-              >
-                {data.secondaryCta.label}
-              </Button>
-            )}
-          </div>
-        </div>
+          );
+        })}
       </div>
 
-      {/* Floating social sidebar on the right */}
-      <div className="absolute right-6 top-1/2 -translate-y-1/2 z-20 hidden md:flex flex-col gap-4">
+      {/* Floating social sidebar on the right (matches screenshot exactly) */}
+      <div className="absolute right-6 top-1/2 -translate-y-1/2 z-30 hidden md:flex flex-col gap-3">
         {[
-          { icon: "facebook", color: "bg-[#1877F2]", url: "#" },
+          {
+            icon: "facebook",
+            color: "bg-[#1877F2]",
+            url: getSocials("facebook"),
+          },
           {
             icon: "instagram",
             color: "bg-gradient-to-tr from-[#FD1D1D] to-[#E1306C]",
-            url: "#",
+            url: getSocials("instagram"),
           },
-          { icon: "youtube", color: "bg-[#FF0000]", url: "#" },
-          { icon: "whatsapp", color: "bg-[#25D366]", url: "#" },
+          {
+            icon: "youtube",
+            color: "bg-[#FF0000]",
+            url: getSocials("youtube"),
+          },
+          {
+            icon: "whatsapp",
+            color: "bg-[#25D366]",
+            url:
+              getSocials("whatsapp") !== "#"
+                ? getSocials("whatsapp")
+                : "https://wa.me/919724305900",
+          },
         ].map((item) => (
           <a
             key={item.icon}
             href={item.url}
-            className={`flex h-10 w-10 items-center justify-center rounded-full text-white shadow-lg transition-transform hover:scale-115 duration-300 ${item.color}`}
+            className={`flex h-10 w-10 items-center justify-center rounded-full text-white shadow-md hover:scale-110 transition-transform duration-300 ${item.color}`}
+            aria-label={item.icon}
           >
             <span className="sr-only">{item.icon}</span>
             {item.icon === "facebook" && (
@@ -119,14 +191,18 @@ export default function HeroSection({ data, lang = "en" }: HeroSectionProps) {
         ))}
       </div>
 
-      {/* Slider indicators/arrows */}
-      <div className="absolute bottom-8 left-6 md:left-12 flex gap-3 z-10">
-        <button className="h-10 w-10 rounded-full border border-white/20 bg-black/30 flex items-center justify-center text-white hover:bg-primary transition-all duration-300">
-          ←
-        </button>
-        <button className="h-10 w-10 rounded-full border border-white/20 bg-black/30 flex items-center justify-center text-white hover:bg-primary transition-all duration-300">
-          →
-        </button>
+      {/* Slider Indicators */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setActiveIndex(index)}
+            className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer hover:bg-[#F7A707]/90 ${
+              index === activeIndex ? "w-8 bg-[#F7A707]" : "w-2.5 bg-white/40"
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
       </div>
     </section>
   );

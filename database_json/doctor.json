@@ -1,0 +1,132 @@
+[
+  {
+    "id": "cmpm_doc_sagar",
+    "name": "Dr. Sagar Patel",
+    "degree": "Fellowship in Neonatology (I.A.P.), Pediatric Critical Care (Mumbai)",
+    "description": "Dr. Sagar Patel has years of comprehensive clinical pediatric experience, specializing in advanced neonatal critical care and respiratory support structures.",
+    "mobileNo": "+91 97243 05900",
+    "designation": "Neonatologist and Pediatric Intensivist",
+    "photo": "/dr_sagar.png",
+    "status": "active"
+  },
+  {
+    "id": "cmpm_doc_nirav",
+    "name": "Dr. Nirav Patel",
+    "degree": "Fellowship in Neonatology (N.N.F.), M.B.B.S, D.Ped.",
+    "description": "Dr. Nirav Patel is dedicated to exceptional newborn care, special handling for high-risk neonates, and continuous developmental therapy monitoring.",
+    "mobileNo": "+91 97243 05900",
+    "designation": "Neonatologist and Pediatric Intensivist",
+    "photo": "/dr_nirav.png",
+    "status": "active"
+  },
+  {
+    "id": "cmpm_doc_sunil",
+    "name": "Dr. Sunil Patel",
+    "degree": "M.B.B.S, D.Ped.",
+    "description": "Dr. Sunil Patel specializes in critical child health diagnostics and comprehensive neonatal intensive care, ensuring safe outcomes for high-risk babies.",
+    "mobileNo": "+91 97243 05900",
+    "designation": "Neonatologist & Pediatric Intensivist",
+    "photo": "/dr_sunil.png",
+    "status": "active"
+  },
+  {
+    "id": "cmpm_doc_maulik_neo",
+    "name": "Dr. Maulik Patel",
+    "degree": "MD (Pediatrics)",
+    "description": "Dr. Maulik Patel is a dedicated pediatrician and intensivist, providing specialist clinical support in managing complex neonatal and pediatric intensive care cases.",
+    "mobileNo": "+91 97243 05900",
+    "designation": "Neonatologist & Pediatric Intensivist",
+    "photo": "/dr_maulik_neo.png",
+    "status": "active"
+  },
+  {
+    "id": "cmpm_doc_tejas",
+    "name": "Dr. Tejas Shah",
+    "degree": "M.D. Pediatrics, Pediatric Intensive Care Medicine (UK), Fellowship in Pediatric Bronchoscopy (USA)",
+    "description": "Dr. Tejas Shah is a highly distinguished intensivist with specialized international fellowships in pediatric critical care and advanced bronchoscopy.",
+    "mobileNo": "+91 97243 05900",
+    "designation": "Neonatologist & Pediatric Intensivist",
+    "photo": "/dr_tejas.png",
+    "status": "active"
+  },
+  {
+    "id": "cmpm_doc_bhavik",
+    "name": "Dr. Bhavik Shah",
+    "degree": "M.B.B.S, D.Ped.",
+    "description": "Dr. Bhavik Shah has extensive expertise in pediatric outpatient and inpatient care, critical neonatologist consultations, and infant emergency management.",
+    "mobileNo": "+91 97243 05900",
+    "designation": "Neonatologist & Pediatric Intensivist",
+    "photo": "/dr_bhavik.png",
+    "status": "active"
+  },
+  {
+    "id": "cmpm_doc_divyesh",
+    "name": "Dr. Divyesh Sadadiwala",
+    "degree": "MD - Pediatrics",
+    "description": "Dr. Divyesh Sadadiwala is a highly specialized pediatric cardiologist, dedicated to diagnosing and treating heart conditions in infants, children, and young adults.",
+    "mobileNo": "+91 97243 05900",
+    "designation": "Pediatric Cardiologist",
+    "photo": "/dr_divyesh.png",
+    "status": "active"
+  },
+  {
+    "id": "cmpm_doc_vaibhav",
+    "name": "Dr. Vaibhav Shah",
+    "degree": "MD - Pediatrics",
+    "description": "Dr. Vaibhav Shah is a leading pediatric hemato-oncologist, specializing in the diagnosis and comprehensive treatment of blood disorders and pediatric cancers.",
+    "mobileNo": "+91 97243 05900",
+    "designation": "Pediatric Hemato-Oncologist",
+    "photo": "/dr_vaibhav.png",
+    "status": "active"
+  },
+  {
+    "id": "cmpm_doc_urvish",
+    "name": "Dr. Urvish Parikh",
+    "degree": "M.Ch in Pediatric Surgery & M.S in General Surgery",
+    "description": "Dr. Urvish Parikh is an expert pediatric surgeon with advanced training in performing complex medico-surgical operations for neonates and young children.",
+    "mobileNo": "+91 97243 05900",
+    "designation": "Pediatric Surgeon",
+    "photo": "/dr_urvish.png",
+    "status": "active"
+  },
+  {
+    "id": "cmpm_doc_harsh",
+    "name": "Dr. Harsh Patel",
+    "degree": "M.B.B.S, D.N.B. (Pediatrics)",
+    "description": "Dr. Harsh Patel specializes in pediatric neurology, providing expert evaluation and treatments for pediatric neuromuscular disorders, epilepsy, and developmental delays.",
+    "mobileNo": "+91 97243 05900",
+    "designation": "Pediatric Neurologist",
+    "photo": "/dr_harsh.png",
+    "status": "active"
+  },
+  {
+    "id": "cmpm_doc_ruchi",
+    "name": "Dr. Ruchi Shah",
+    "degree": "M.D. Pediatrics",
+    "description": "Dr. Ruchi Shah is an experienced pediatric endocrinologist, specializing in the management of juvenile diabetes, growth disorders, and thyroid issues in kids.",
+    "mobileNo": "+91 97243 05900",
+    "designation": "Pediatric Endocrinologist",
+    "photo": "/dr_ruchi.png",
+    "status": "active"
+  },
+  {
+    "id": "cmpm_doc_maulik_ortho",
+    "name": "Dr. Maulik Patel (Ortho)",
+    "degree": "MS (Orthopedics)",
+    "description": "Dr. Maulik Patel is a dedicated pediatric orthopedician, specializing in treating pediatric bone fractures, joint deformities, and congenital skeletal issues.",
+    "mobileNo": "+91 97243 05900",
+    "designation": "Pediatric Orthopedician",
+    "photo": "/dr_maulik_ortho.png",
+    "status": "active"
+  },
+  {
+    "id": "cmpm_doc_kinisha",
+    "name": "Dr. Kinisha Patel",
+    "degree": "MD, DNB (Pediatrics), Fellowship in Pediatric Gastroenterology",
+    "description": "Dr. Kinisha Patel is a highly skilled pediatric gastroenterologist, offering expert care in digestive system disorders and nutrition management in children.",
+    "mobileNo": "+91 97243 05900",
+    "designation": "Pediatric Gastroenterologist",
+    "photo": "/dr_kinisha.png",
+    "status": "active"
+  }
+]

@@ -1,0 +1,179 @@
+{
+  "slug": "facilities",
+  "title": "Our Facilities",
+  "metaTitle": "State-of-the-Art Facilities | Orange Children Hospital Ahmedabad",
+  "metaDescription": "Explore our premium pediatric facilities including Level 3 NICU/PICU, high-tech operation theater, 24/7 fully-equipped ambulance services, inpatient deluxe rooms, and comprehensive outpatient clinics.",
+  "pageType": "Facilities",
+  "sections": [
+    {
+      "id": "facilities_hero",
+      "sectionType": "about_hero",
+      "sortOrder": 1,
+      "content": {
+        "title": "Our Facilities",
+        "subtitle": "Home / Our Facilities",
+        "link": ""
+      }
+    },
+    {
+      "id": "nicu_speciality",
+      "sectionType": "facility_feature",
+      "sortOrder": 2,
+      "content": {
+        "title": "NEONATAL INTENSIVE CARE UNIT",
+        "subtitle": "Making them experience the world fully.",
+        "description": "We have state of art Level 3 NICU with natural light and good ventilation. We have facilities like High-Frequency Ventilator (HFO)with Inhouse Geanox Inhaled Nitric Oxide(INO), warmer, incubators, pulse oximeter, multipara monitor, cardiac monitor, CPAP, HHHFNC, Non-invasive ventilator, 6 conventional ventilator, high-frequency oscillatory ventilator (HFOC), point of care 2d ECHO, point of care ultrasounds, point of care ABGA machine and X-Ray machine. We are managing extreme preterm babies of around 500gms weight, Meconium aspirations with severe PPHN, septic shock, MODS, AKI who requires Peritoneal dialysis, and many more neonatal illnesses.",
+        "badge": {
+          "label": "LEVEL 3 NICU",
+          "link": ""
+        },
+        "image": {
+          "id": "img_nicu",
+          "fileUrl": "/hero_baby.png",
+          "altText": "Neonatal Intensive Care Unit"
+        },
+        "imagePosition": "right",
+        "link": ""
+      }
+    },
+    {
+      "id": "picu_speciality",
+      "sectionType": "facility_feature",
+      "sortOrder": 3,
+      "content": {
+        "title": "PEDIATRIC INTENSIVE CARE UNIT",
+        "subtitle": "Treating the obstacles in their growth.",
+        "description": "From the patient's perspective, every child who comes to us is brought under a very dire and stressful situation. We have a state of art PICU Facility with natural light and good ventilation with one isolation bed for severely infected patient. We have facilities like multipara monitor with ECG, IBP, BIBP, Respiratory rate, Heart rate, SPO2, and ETCO2 monitoring, Pulse oxymeter, a defibrillator for cardiac arrhythmia, and resuscitation, infusion pump, syringe pump, crash cart to handle and manage critically ill children.",
+        "badge": {
+          "label": "ADVANCED PICU",
+          "link": ""
+        },
+        "image": {
+          "id": "img_picu",
+          "fileUrl": "/nicu_expertise.png",
+          "altText": "Pediatric Intensive Care Unit"
+        },
+        "imagePosition": "left",
+        "link": ""
+      }
+    },
+    {
+      "id": "emergency_services_section",
+      "sectionType": "facility_feature",
+      "sortOrder": 4,
+      "content": {
+        "title": "24X7 EMERGENCY SERVICES",
+        "subtitle": "Always by your side.",
+        "description": "Neonatal & Pediatric intensivist doctors specialized in looking after sick patients are available round the clock 24 hours a day, 7 days a week, ensuring that the sick patients receive full attention and immediate treatment without undue delay. We accept all patients of pediatric medical emergencies like convulsion, respiratory distress, pyrexia, abdominal pain, persistent vomiting, altered sensorium, etc., and also pediatric surgical, trauma, and accidental emergencies.",
+        "badge": {
+          "label": "24X7 EMERGENCY",
+          "link": ""
+        },
+        "image": {
+          "id": "img_emergency",
+          "fileUrl": "/icu_infrastructure.png",
+          "altText": "24X7 Emergency Wards"
+        },
+        "imagePosition": "right",
+        "link": ""
+      }
+    },
+    {
+      "id": "operation_theater_section",
+      "sectionType": "facility_feature",
+      "sortOrder": 5,
+      "content": {
+        "title": "HIGH-TECH OPERATION THEATER",
+        "subtitle": "We are with you in every battle",
+        "description": "Fully-equipped ready-to-use operation theater, 24 hours a day, For emergency and elective (planned) Surgeries with Leproscopy, IITV, Brochoscopy, Cystocopy, and GI scopy facilities. We cater to patients of pediatric surgery, pediatric neurosurgery, pediatric trauma, pediatric orthopedic, pediatric plastic surgery, and pediatric urology services.",
+        "badge": {
+          "label": "MODERN OT",
+          "link": ""
+        },
+        "image": {
+          "id": "img_ot",
+          "fileUrl": "/facility_ot.png",
+          "altText": "Operation Theater"
+        },
+        "imagePosition": "left",
+        "link": ""
+      }
+    },
+    {
+      "id": "super_speciality_section",
+      "sectionType": "facility_feature",
+      "sortOrder": 6,
+      "content": {
+        "title": "PEDIATRIC SUPER SPECIALTY",
+        "subtitle": "Any concern, our treatment",
+        "description": "Pediatric Surgery, Neurology, Nephrology, Cardiology, Endocrinology, Genetics, Gastroenterology, Hematooncology, Lactation Consultant.",
+        "badge": {
+          "label": "SUPER SPECIALITIES",
+          "link": ""
+        },
+        "image": {
+          "id": "img_super",
+          "fileUrl": "/dr_sagar.png",
+          "altText": "Pediatric Super Specialty Clinics"
+        },
+        "imagePosition": "right",
+        "link": ""
+      }
+    },
+    {
+      "id": "ambulance_section",
+      "sectionType": "facility_feature",
+      "sortOrder": 7,
+      "content": {
+        "title": "AMBULANCE SERVICES",
+        "subtitle": "One call away",
+        "description": "Hospital is fully-equipped for short and long distance transfers with provision for providing full range of PICU/NICU treatment en-route. We have specialized, dedicated transport ventilators running on only oxygen supply.",
+        "badge": {
+          "label": "24/7 AMBULANCE",
+          "link": ""
+        },
+        "image": {
+          "id": "img_ambulance",
+          "fileUrl": "/facility_ambulance.png",
+          "altText": "Emergency Ambulance"
+        },
+        "imagePosition": "left",
+        "link": ""
+      }
+    },
+    {
+      "id": "patient_care_section",
+      "sectionType": "patient_care_services",
+      "sortOrder": 8,
+      "content": {
+        "inpatient": {
+          "title": "INPATIENT SERVICES",
+          "description": "We Have 5 Special Rooms with Kids Friendly Environment with all basic infrastructures like TV, AC, Refrigerator, Geyser, Sharing rooms also available.",
+          "image": "/icu_infrastructure.png",
+          "link": ""
+        },
+        "outpatient": {
+          "title": "OUTPATIENT SERVICES",
+          "description": "We provide outpatient services to our NICU graduates, growth & Development Monitoring, High Risk New Born Follow up, their Vaccination, and routine illnesses.",
+          "image": "/nicu_expertise.png",
+          "link": ""
+        },
+        "link": ""
+      }
+    },
+    {
+      "id": "facilities_cta",
+      "sectionType": "cta",
+      "sortOrder": 9,
+      "content": {
+        "title": "Best Treatment For Your Child Is Just One Call Away",
+        "primaryCta": {
+          "label": "Call Now",
+          "href": "tel:+919724305900",
+          "link": ""
+        },
+        "link": ""
+      }
+    }
+  ]
+}
