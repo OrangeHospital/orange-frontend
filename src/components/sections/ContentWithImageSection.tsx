@@ -2,6 +2,38 @@ import Image from "next/image";
 import { Button } from "../button";
 import { cn } from "@/lib/utils";
 
+const isValidImageUrl = (url?: string) => {
+  if (!url) return false;
+  return (
+    url.startsWith("/") ||
+    url.startsWith("http://") ||
+    url.startsWith("https://") ||
+    !url.includes(":")
+  );
+};
+
+const getImageUrl = (url?: string) => {
+  if (!url) return "";
+  if (
+    url.startsWith("/") ||
+    url.startsWith("http://") ||
+    url.startsWith("https://")
+  ) {
+    return url;
+  }
+  const fileBase =
+    process.env.NEXT_PUBLIC_FILE_BASE_URL || "http://3.111.240.196:7071/share/";
+  const base = fileBase.endsWith("/") ? fileBase : `${fileBase}/`;
+  return `${base}${url}`;
+};
+
+interface ExtendedCTA {
+  label: string;
+  href: string;
+  link?: string;
+  variant?: "primary" | "secondary" | "outline" | "ghost";
+}
+
 interface ContentWithImageSectionProps {
   data: PageSection["content"];
   lang?: string;
@@ -12,6 +44,8 @@ export default function ContentWithImageSection({
   lang = "en",
 }: ContentWithImageSectionProps) {
   const isReversed = data.imagePosition === "right";
+  const primaryCta = data.primaryCta as ExtendedCTA | undefined;
+  const secondaryCta = data.secondaryCta as ExtendedCTA | undefined;
 
   return (
     <section className="py-20 bg-slate-50 overflow-hidden">
@@ -24,20 +58,18 @@ export default function ContentWithImageSection({
         >
           {/* Image Side */}
           <div className="w-full lg:w-1/2">
-            <div className="relative overflow-hidden aspect-[4/3] rounded-2xl bg-slate-200">
-              {data.image?.fileUrl &&
-              (data.image.fileUrl.startsWith("/") ||
-                data.image.fileUrl.startsWith("http")) ? (
+            <div className="relative overflow-hidden aspect-[4/3] rounded-2xl bg-white border border-slate-100/50 shadow-sm">
+              {data.image?.fileUrl && isValidImageUrl(data.image.fileUrl) ? (
                 <Image
-                  src={data.image.fileUrl}
+                  src={getImageUrl(data.image.fileUrl)}
                   alt={
                     data.image.altText ||
                     data.title ||
                     "Orange Hospital Infrastructure"
                   }
                   fill
-                  className="object-cover "
-                  quality={90}
+                  className="object-contain p-2"
+                  quality={95}
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -65,6 +97,24 @@ export default function ContentWithImageSection({
               </p>
             )}
 
+            {data.content && data.content.length > 0 && (
+              <div className="space-y-4 mb-8">
+                {data.content
+                  .filter(
+                    (p: unknown): p is string =>
+                      typeof p === "string" && p.trim() !== "",
+                  )
+                  .map((para: string, index: number) => (
+                    <p
+                      key={index}
+                      className="text-slate-600 leading-relaxed text-sm md:text-base font-normal"
+                    >
+                      {para}
+                    </p>
+                  ))}
+              </div>
+            )}
+
             {/* Render checklist points exactly like in screenshot 5 */}
             {data.points && data.points.length > 0 && (
               <ul className="space-y-4 mb-8">
@@ -81,30 +131,39 @@ export default function ContentWithImageSection({
               </ul>
             )}
 
-            {(data.primaryCta || data.secondaryCta) && (
+            {((primaryCta &&
+              primaryCta.label &&
+              primaryCta.label.trim() !== "") ||
+              (secondaryCta &&
+                secondaryCta.label &&
+                secondaryCta.label.trim() !== "")) && (
               <div className="flex gap-4">
-                {data.primaryCta && (
-                  <Button
-                    href={data.primaryCta.href}
-                    variant="primary"
-                    size="md"
-                    lang={lang}
-                    className="rounded-full"
-                  >
-                    {data.primaryCta.label}
-                  </Button>
-                )}
-                {data.secondaryCta && (
-                  <Button
-                    href={data.secondaryCta.href}
-                    variant="outline"
-                    size="md"
-                    lang={lang}
-                    className="rounded-full border-slate-200 text-slate-700 hover:bg-slate-100"
-                  >
-                    {data.secondaryCta.label}
-                  </Button>
-                )}
+                {primaryCta &&
+                  primaryCta.label &&
+                  primaryCta.label.trim() !== "" && (
+                    <Button
+                      href={primaryCta.href || primaryCta.link || ""}
+                      variant="primary"
+                      size="md"
+                      lang={lang}
+                      className="rounded-full"
+                    >
+                      {primaryCta.label}
+                    </Button>
+                  )}
+                {secondaryCta &&
+                  secondaryCta.label &&
+                  secondaryCta.label.trim() !== "" && (
+                    <Button
+                      href={secondaryCta.href || secondaryCta.link || ""}
+                      variant="outline"
+                      size="md"
+                      lang={lang}
+                      className="rounded-full border-slate-200 text-slate-700 hover:bg-slate-100"
+                    >
+                      {secondaryCta.label}
+                    </Button>
+                  )}
               </div>
             )}
           </div>

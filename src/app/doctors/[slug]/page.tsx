@@ -71,8 +71,7 @@ export default async function DoctorPage({ params }: UnifiedPageProps) {
     }
     pageData = response.data;
     settings = await fetchSettings();
-  } catch (error) {
-    console.error("Error loading dynamic page:", error);
+  } catch {
     notFound();
   }
 

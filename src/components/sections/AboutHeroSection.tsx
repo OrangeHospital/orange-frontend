@@ -3,29 +3,62 @@
 import Image from "next/image";
 import Link from "next/link";
 
+const isValidImageUrl = (url?: string) => {
+  if (!url) return false;
+  return (
+    url.startsWith("/") ||
+    url.startsWith("http://") ||
+    url.startsWith("https://") ||
+    !url.includes(":")
+  );
+};
+
+const getImageUrl = (url?: string) => {
+  if (!url) return "";
+  if (
+    url.startsWith("/") ||
+    url.startsWith("http://") ||
+    url.startsWith("https://")
+  ) {
+    return url;
+  }
+  const fileBase =
+    process.env.NEXT_PUBLIC_FILE_BASE_URL || "http://3.111.240.196:7071/share/";
+  const base = fileBase.endsWith("/") ? fileBase : `${fileBase}/`;
+  return `${base}${url}`;
+};
+
 interface AboutHeroSectionProps {
   data: {
     title?: string;
     subtitle?: string;
+    photo?: {
+      fileUrl: string;
+      altText?: string;
+    };
   };
 }
 
 export default function AboutHeroSection({ data }: AboutHeroSectionProps) {
   const title = data.title || "About Us";
+  const heroImage =
+    data.photo?.fileUrl && isValidImageUrl(data.photo.fileUrl)
+      ? getImageUrl(data.photo.fileUrl)
+      : "/icu_infrastructure.png";
 
   return (
-    <section className="relative w-full h-[35vh] min-h-[220px] md:h-[40vh] overflow-hidden bg-slate-950 flex items-center justify-center">
+    <section className="relative w-full h-[45vh] min-h-[320px] md:h-[50vh] overflow-hidden bg-slate-950 flex items-center justify-center">
       {/* Background Image with Dark Premium Vignette */}
-      <div className="absolute inset-0 z-0 opacity-40">
+      <div className="absolute inset-0 z-0 opacity-75">
         <Image
-          src="/icu_infrastructure.png"
-          alt="Orange Children Hospital"
+          src={heroImage}
+          alt={data.photo?.altText || "Orange Children Hospital"}
           fill
           priority
-          className="object-cover object-center filter grayscale contrast-125"
-          quality={90}
+          className="object-cover object-center"
+          quality={95}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-900/60 to-slate-950" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/40 to-slate-950/80" />
       </div>
 
       {/* Hero Content */}

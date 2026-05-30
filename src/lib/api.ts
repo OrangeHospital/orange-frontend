@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE;
 
 export async function fetchPageSections(
@@ -35,22 +36,7 @@ export async function fetchSettings(): Promise<Setting[]> {
   const data = await response.json();
   return data.data;
 }
-// export async function fetchSettings(): Promise<Setting[]> {
-//   return [
-//     { id: "s1", key: "company_name", value: "Orange Children Hospital" },
-//     {
-//       id: "s2",
-//       key: "company_email",
-//       value: "info@orangechildrenhospital.com",
-//     },
-//     { id: "s3", key: "company_phone", value: "+91 97243 05900" },
-//     {
-//       id: "s4",
-//       key: "default_page_description",
-//       value: "Best Pediatric and Neonatal ICU Hospital in Ahmedabad",
-//     },
-//   ];
-// }
+
 export async function fetchMenu(): Promise<MenusResponse> {
   return {
     success: true,
@@ -151,7 +137,6 @@ export async function fetchFormFields(formId: string): Promise<FormField[]> {
   return data.data || [];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function formSubmit(formData: any): Promise<FormField[]> {
   const response = await fetch(`${API_BASE_URL}/form/submit`, {
     method: "POST",
@@ -223,4 +208,115 @@ export async function fetchSocial(): Promise<Social[]> {
   }
   const data = await response.json();
   return data.data;
+}
+
+export async function fetchPagesSitemap(): Promise<{
+  pages: Array<{
+    slug: string;
+    updatedAt: string;
+    changefreq?: string;
+    priority?: string;
+  }>;
+}> {
+  const response = await fetch(`${API_BASE_URL}/sitemap/page`, {
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to fetch pages sitemap: ${response.statusText}`);
+  }
+  const xml = await response.text();
+  const pages: any[] = [];
+  const urlRegex = /<url>([\s\S]*?)<\/url>/g;
+  const locRegex = /<loc>(.*?)<\/loc>/;
+  const lastmodRegex = /<lastmod>(.*?)<\/lastmod>/;
+
+  let match;
+  while ((match = urlRegex.exec(xml)) !== null) {
+    const urlContent = match[1];
+    const locMatch = locRegex.exec(urlContent);
+    const lastmodMatch = lastmodRegex.exec(urlContent);
+
+    if (locMatch) {
+      const loc = locMatch[1];
+      const lastmod = lastmodMatch ? lastmodMatch[1] : new Date().toISOString();
+
+      try {
+        const parsedUrl = new URL(loc);
+        const slug = parsedUrl.pathname.replace(/^\/|\/$/g, "");
+        pages.push({
+          slug,
+          updatedAt: lastmod,
+          changefreq: "daily",
+          priority: "0.7",
+        });
+      } catch {
+        const slug = loc
+          .replace(/https?:\/\/[^\/]+/, "")
+          .replace(/^\/|\/$/g, "");
+        pages.push({
+          slug,
+          updatedAt: lastmod,
+          changefreq: "daily",
+          priority: "0.7",
+        });
+      }
+    }
+  }
+  return { pages };
+}
+export async function fetchSuccessStoriesSitemap(): Promise<{
+  successStories: Array<{
+    slug: string;
+    updatedAt: string;
+    changefreq?: string;
+    priority?: string;
+  }>;
+}> {
+  const response = await fetch(`${API_BASE_URL}/sitemap/success_story`, {
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch success stories sitemap: ${response.statusText}`,
+    );
+  }
+  const xml = await response.text();
+  const successStories: any[] = [];
+  const urlRegex = /<url>([\s\S]*?)<\/url>/g;
+  const locRegex = /<loc>(.*?)<\/loc>/;
+  const lastmodRegex = /<lastmod>(.*?)<\/lastmod>/;
+
+  let match;
+  while ((match = urlRegex.exec(xml)) !== null) {
+    const urlContent = match[1];
+    const locMatch = locRegex.exec(urlContent);
+    const lastmodMatch = lastmodRegex.exec(urlContent);
+
+    if (locMatch) {
+      const loc = locMatch[1];
+      const lastmod = lastmodMatch ? lastmodMatch[1] : new Date().toISOString();
+
+      try {
+        const parsedUrl = new URL(loc);
+        let slug = parsedUrl.pathname.replace(/^\/|\/$/g, "");
+        slug = slug.replace(/^success_story\//, "");
+        successStories.push({
+          slug,
+          updatedAt: lastmod,
+          changefreq: "daily",
+          priority: "0.7",
+        });
+      } catch {
+        let slug = loc.replace(/https?:\/\/[^\/]+/, "").replace(/^\/|\/$/g, "");
+        slug = slug.replace(/^success_story\//, "");
+        successStories.push({
+          slug,
+          updatedAt: lastmod,
+          changefreq: "daily",
+          priority: "0.7",
+        });
+      }
+    }
+  }
+  return { successStories };
 }

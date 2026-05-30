@@ -1,7 +1,13 @@
 "use client";
 
 import React from "react";
-import { ClipboardList, Stethoscope, Milestone } from "lucide-react";
+import {
+  ClipboardList,
+  Stethoscope,
+  Milestone,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 interface TimelineItem {
   title: string;
@@ -24,8 +30,22 @@ export default function HorizontalTimelineSection({
   const subtitle = data.subtitle;
   const items = data.items || [];
 
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -300, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 300, behavior: "smooth" });
+    }
+  };
+
   return (
-    <section className="relative overflow-hidden py-16 md:py-24 bg-[#FFFCF7]">
+    <section className="relative overflow-hidden py-8 md:py-8 bg-[#FFFCF7]">
       {/* Background Decorative Gradients */}
       <div className="absolute top-[-100px] right-[-100px] h-[350px] w-[350px] rounded-full bg-[#F7A707]/5 blur-3xl" />
       <div className="absolute bottom-[-100px] left-[-100px] h-[350px] w-[350px] rounded-full bg-[#EF641A]/5 blur-3xl" />
@@ -40,7 +60,7 @@ export default function HorizontalTimelineSection({
 
       <div className="container mx-auto px-6 max-w-7xl relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-16 max-w-3xl mx-auto">
+        <div className="text-center mb-6 max-w-3xl mx-auto">
           {subtitle && (
             <p className="text-[#EF641A] text-xs sm:text-sm font-semibold uppercase tracking-[0.2em] mb-3">
               {subtitle}
@@ -57,158 +77,134 @@ export default function HorizontalTimelineSection({
         {/* Timeline Container */}
         {items.length > 0 ? (
           <div className="relative">
-            {/* Desktop Horizontal Layout */}
-            <div className="hidden lg:block relative py-12">
-              {/* Horizontal Timeline Track */}
-              <div className="absolute top-[50%] left-0 right-0 h-1 bg-slate-100 -translate-y-1/2 rounded-full z-0">
-                {/* Glowing Active Track Effect */}
-                <div className="absolute inset-y-0 left-0 right-0 bg-gradient-to-r from-[#F7A707]/60 via-[#EF641A]/60 to-[#F7A707]/60 rounded-full" />
-              </div>
+            {/* Scrollable Horizontal Layout for Desktop & Tablet */}
+            <div className="hidden md:block relative group/timeline px-4">
+              {/* Left Scroll Button */}
+              <button
+                onClick={scrollLeft}
+                className="absolute left-[-20px] top-1/2 -translate-y-1/2 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-white border border-slate-100 shadow-md text-slate-700 hover:text-[#EF641A] transition-all duration-300 hover:scale-110 active:scale-95"
+                aria-label="Scroll left"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
 
-              {/* Flex Grid for Alternating Layout */}
+              {/* Right Scroll Button */}
+              <button
+                onClick={scrollRight}
+                className="absolute right-[-20px] top-1/2 -translate-y-1/2 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-white border border-slate-100 shadow-md text-slate-700 hover:text-[#EF641A] transition-all duration-300 hover:scale-110 active:scale-95"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+
+              {/* Hide Webkit Scrollbars */}
+              <style
+                dangerouslySetInnerHTML={{
+                  __html: `
+                .hide-scrollbar::-webkit-scrollbar {
+                  display: none;
+                }
+              `,
+                }}
+              />
+
+              {/* Scroll Container */}
               <div
-                className="grid gap-6 relative z-10"
+                ref={scrollRef}
+                className="overflow-x-auto scroll-smooth hide-scrollbar py-6"
                 style={{
-                  gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))`,
+                  scrollbarWidth: "none",
+                  msOverflowStyle: "none",
                 }}
               >
-                {items.map((item, index) => {
-                  const isTop = item.position === "top";
-                  const stepNumber = String(index + 1).padStart(2, "0");
-
-                  return (
-                    <div
-                      key={index}
-                      className="flex flex-col items-center relative"
-                    >
-                      {/* Top Card Area */}
-                      <div className="w-full h-44 flex items-end justify-center pb-8">
-                        {isTop && (
-                          <div className="w-full max-w-[220px] bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group relative">
-                            {/* Accent Dot */}
-                            <span className="absolute top-3 right-3 text-[#F7A707]/30 group-hover:text-[#F7A707] transition-colors duration-300">
-                              <Stethoscope className="w-4 h-4 stroke-[1.5]" />
-                            </span>
-                            {/* <div className="text-xs font-bold text-[#F7A707] mb-1.5 tracking-wider">
-                              STEP {stepNumber}
-                            </div> */}
-                            <h3 className="text-sm font-semibold text-slate-800 leading-snug group-hover:text-[#EF641A] transition-colors duration-300">
-                              {item.title}
-                            </h3>
-                            {item.description && (
-                              <p className="text-xs text-slate-400 font-light mt-2 line-clamp-3">
-                                {item.description}
-                              </p>
-                            )}
-                            {/* Connector Line pointing down to track */}
-                            <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[2px] h-8 bg-dashed border-r-2 border-dashed border-[#F7A707]/30 group-hover:border-[#EF641A] transition-colors duration-300" />
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Timeline Central Node */}
-                      <div className="relative my-2 z-20 flex items-center justify-center">
-                        <div className="group/node flex items-center justify-center cursor-pointer">
-                          {/* Inner glowing pulse ring */}
-                          <div className="absolute w-8 h-8 rounded-full bg-gradient-to-tr from-[#F7A707] to-[#EF641A] opacity-20 scale-100 group-hover/node:scale-150 group-hover/node:opacity-30 transition-all duration-500 rounded-full" />
-
-                          {/* Outer node circle */}
-                          <div className="relative w-6 h-6 rounded-full border-4 border-white bg-gradient-to-tr from-[#F7A707] to-[#EF641A] shadow-md group-hover/node:shadow-lg group-hover/node:scale-110 transition-all duration-300 flex items-center justify-center">
-                            <div className="w-1.5 h-1.5 bg-white rounded-full" />
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Bottom Card Area */}
-                      <div className="w-full h-44 flex items-start justify-center pt-8">
-                        {!isTop && (
-                          <div className="w-full max-w-[220px] bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-xl hover:translate-y-1 transition-all duration-300 group relative">
-                            {/* Accent Dot */}
-                            <span className="absolute top-3 right-3 text-[#EF641A]/30 group-hover:text-[#EF641A] transition-colors duration-300">
-                              <ClipboardList className="w-4 h-4 stroke-[1.5]" />
-                            </span>
-                            <div className="text-xs font-bold text-[#EF641A] mb-1.5 tracking-wider">
-                              STEP {stepNumber}
-                            </div>
-                            <h3 className="text-sm font-semibold text-slate-800 leading-snug group-hover:text-[#F7A707] transition-colors duration-300">
-                              {item.title}
-                            </h3>
-                            {item.description && (
-                              <p className="text-xs text-slate-400 font-light mt-2 line-clamp-3">
-                                {item.description}
-                              </p>
-                            )}
-                            {/* Connector Line pointing up to track */}
-                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-[2px] h-8 bg-dashed border-r-2 border-dashed border-[#EF641A]/30 group-hover:border-[#F7A707] transition-colors duration-300" />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Tablet & Medium Horizontal Scrolling Layout */}
-            <div className="hidden md:block lg:hidden overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-slate-200">
-              <div className="relative min-w-[900px] py-12">
-                {/* Horizontal Timeline Track */}
-                <div className="absolute top-[50%] left-0 right-0 h-1 bg-slate-100 -translate-y-1/2 rounded-full z-0">
-                  <div className="absolute inset-y-0 left-0 right-0 bg-gradient-to-r from-[#F7A707]/60 via-[#EF641A]/60 to-[#F7A707]/60 rounded-full" />
-                </div>
-
+                {/* Scroll Content Wrapper */}
                 <div
-                  className="grid gap-6 relative z-10"
-                  style={{
-                    gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))`,
-                  }}
+                  className="relative py-6"
+                  style={{ width: "max-content", minWidth: "100%" }}
                 >
-                  {items.map((item, index) => {
-                    const isTop = item.position === "top";
-                    const stepNumber = String(index + 1).padStart(2, "0");
+                  {/* Horizontal Timeline Track */}
+                  <div className="absolute top-[50%] left-[120px] right-[120px] h-1 bg-slate-100 -translate-y-1/2 rounded-full z-0">
+                    {/* Glowing Active Track Effect */}
+                    <div className="absolute inset-y-0 left-0 right-0 bg-gradient-to-r from-[#F7A707]/60 via-[#EF641A]/60 to-[#F7A707]/60 rounded-full" />
+                  </div>
 
-                    return (
-                      <div
-                        key={index}
-                        className="flex flex-col items-center relative"
-                      >
-                        {/* Top Card Area */}
-                        <div className="w-full h-40 flex items-end justify-center pb-6">
-                          {isTop && (
-                            <div className="w-full max-w-[180px] bg-white rounded-2xl border border-slate-100 p-4 shadow-sm hover:shadow-lg transition-all duration-300 group relative">
-                              <div className="text-[10px] font-bold text-[#F7A707] mb-1 tracking-wider">
-                                STEP {stepNumber}
+                  {/* Alternating Layout Content */}
+                  <div className="flex gap-8 px-[20px] relative z-10">
+                    {items.map((item, index) => {
+                      const isTop = item.position === "top";
+                      const stepNumber = String(index + 1).padStart(2, "0");
+
+                      return (
+                        <div
+                          key={index}
+                          className="flex flex-col items-center relative w-[240px] flex-shrink-0"
+                        >
+                          {/* Top Card Area */}
+                          <div className="w-full h-36 flex items-end justify-center pb-5">
+                            {isTop && (
+                              <div className="w-full max-w-[220px] bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group relative">
+                                {/* Accent Dot */}
+                                <span className="absolute top-3 right-3 text-[#F7A707]/30 group-hover:text-[#F7A707] transition-colors duration-300">
+                                  <Stethoscope className="w-4 h-4 stroke-[1.5]" />
+                                </span>
+                                {/* <div className="text-xs font-bold text-[#F7A707] mb-1.5 tracking-wider">
+                                  STEP {stepNumber}
+                                </div> */}
+                                <h3 className="text-sm font-semibold text-slate-800 leading-snug group-hover:text-[#EF641A] transition-colors duration-300">
+                                  {item.title}
+                                </h3>
+                                {item.description && (
+                                  <p className="text-xs text-slate-400 font-light mt-2 line-clamp-3">
+                                    {item.description}
+                                  </p>
+                                )}
+                                {/* Connector Line pointing down to track */}
+                                <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 w-[2px] h-5 bg-dashed border-r-2 border-dashed border-[#F7A707]/30 group-hover:border-[#EF641A] transition-colors duration-300" />
                               </div>
-                              <h3 className="text-xs font-semibold text-slate-800 leading-snug">
-                                {item.title}
-                              </h3>
-                              <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-[2px] h-6 bg-dashed border-r-2 border-dashed border-[#F7A707]/30" />
-                            </div>
-                          )}
-                        </div>
+                            )}
+                          </div>
 
-                        {/* Node */}
-                        <div className="relative my-1 z-20 flex items-center justify-center">
-                          <div className="w-5 h-5 rounded-full border-4 border-white bg-gradient-to-tr from-[#F7A707] to-[#EF641A] shadow-sm" />
-                        </div>
+                          {/* Timeline Central Node */}
+                          <div className="relative my-2 z-20 flex items-center justify-center">
+                            <div className="group/node flex items-center justify-center cursor-pointer">
+                              {/* Inner glowing pulse ring */}
+                              <div className="absolute w-8 h-8 rounded-full bg-gradient-to-tr from-[#F7A707] to-[#EF641A] opacity-20 scale-100 group-hover/node:scale-150 group-hover/node:opacity-30 transition-all duration-500 rounded-full" />
 
-                        {/* Bottom Card Area */}
-                        <div className="w-full h-40 flex items-start justify-center pt-6">
-                          {!isTop && (
-                            <div className="w-full max-w-[180px] bg-white rounded-2xl border border-slate-100 p-4 shadow-sm hover:shadow-lg transition-all duration-300 group relative">
-                              <div className="text-[10px] font-bold text-[#EF641A] mb-1 tracking-wider">
-                                STEP {stepNumber}
+                              {/* Outer node circle */}
+                              <div className="relative w-6 h-6 rounded-full border-4 border-white bg-gradient-to-tr from-[#F7A707] to-[#EF641A] shadow-md group-hover/node:shadow-lg group-hover/node:scale-110 transition-all duration-300 flex items-center justify-center">
+                                <div className="w-1.5 h-1.5 bg-white rounded-full" />
                               </div>
-                              <h3 className="text-xs font-semibold text-slate-800 leading-snug">
-                                {item.title}
-                              </h3>
-                              <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-[2px] h-6 bg-dashed border-r-2 border-dashed border-[#EF641A]/30" />
                             </div>
-                          )}
+                          </div>
+
+                          {/* Bottom Card Area */}
+                          <div className="w-full h-36 flex items-start justify-center pt-5">
+                            {!isTop && (
+                              <div className="w-full max-w-[220px] bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-xl hover:translate-y-1 transition-all duration-300 group relative">
+                                {/* Accent Dot */}
+                                <span className="absolute top-3 right-3 text-[#EF641A]/30 group-hover:text-[#EF641A] transition-colors duration-300">
+                                  <ClipboardList className="w-4 h-4 stroke-[1.5]" />
+                                </span>
+                                <div className="text-xs font-bold text-[#EF641A] mb-1.5 tracking-wider">
+                                  STEP {stepNumber}
+                                </div>
+                                <h3 className="text-sm font-semibold text-slate-800 leading-snug group-hover:text-[#F7A707] transition-colors duration-300">
+                                  {item.title}
+                                </h3>
+                                {item.description && (
+                                  <p className="text-xs text-slate-400 font-light mt-2 line-clamp-3">
+                                    {item.description}
+                                  </p>
+                                )}
+                                {/* Connector Line pointing up to track */}
+                                <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-[2px] h-5 bg-dashed border-r-2 border-dashed border-[#EF641A]/30 group-hover:border-[#F7A707] transition-colors duration-300" />
+                              </div>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
             </div>

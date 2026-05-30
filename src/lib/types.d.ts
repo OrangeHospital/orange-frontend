@@ -48,6 +48,7 @@ interface PageSection {
       photo: MediaAsset;
       bio?: string;
       ishighlight?: boolean;
+      link?: string;
     }>;
     points?: string[];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

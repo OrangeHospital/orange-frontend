@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { fetchSocial, fetchSettings } from "@/lib/api";
 
@@ -128,35 +129,18 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Logo and About */}
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500/10">
-                <svg
-                  viewBox="0 0 100 100"
-                  className="h-7 w-7"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <circle cx="50" cy="55" r="32" fill="#F7A707" />
-                  <path
-                    d="M50 38V72M33 55H67"
-                    stroke="white"
-                    strokeWidth="11"
-                    strokeLinecap="round"
-                  />
-                  <path
-                    d="M50 23C50 15 58 10 65 13C62 20 56 23 50 23Z"
-                    fill="#4CAF50"
-                  />
-                  <path
-                    d="M50 23C44 14 34 16 31 23C39 24 46 25 50 23Z"
-                    fill="#8BC34A"
-                  />
-                </svg>
-              </div>
-              <span className="text-xl font-bold uppercase tracking-tight text-white">
-                Orange Hospital
-              </span>
-            </div>
+            <Link
+              href="/"
+              className="inline-block bg-white px-4 py-2.5 rounded-xl border border-slate-800 shadow-sm max-w-[190px] mb-2 hover:bg-slate-50 transition-colors duration-200"
+            >
+              <Image
+                src="/orange-logo.png"
+                alt="Orange Children Hospital Logo"
+                width={172}
+                height={50}
+                className="h-10 w-auto object-contain"
+              />
+            </Link>
             <p className="text-sm text-gray-400 leading-relaxed">
               Orange Children Hospital is Gujarat&apos;s one of the largest 50
               bedded pediatric hospital. We specialize in Neonatal & Pediatric

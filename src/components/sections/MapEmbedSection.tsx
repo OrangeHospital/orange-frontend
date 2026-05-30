@@ -43,7 +43,7 @@ export default function MapEmbedSection({ data }: MapEmbedSectionProps) {
     "301-308 At Sigma Arcade, Above Vijay Sales, Near Tapovan Circle, Chandkheda, Ahmedabad, Gujarat 382424";
 
   return (
-    <section className="py-16 md:py-20 bg-slate-50 relative overflow-hidden select-none">
+    <section className="py-16 md:py-10 bg-slate-50 relative overflow-hidden select-none">
       {/* Background vector accents */}
       <div className="pointer-events-none absolute -right-20 top-0 h-80 w-80 rounded-full bg-[#F7A707]/5 blur-[100px]" />
       <div className="pointer-events-none absolute -left-20 bottom-0 h-80 w-80 rounded-full bg-orange-400/5 blur-[100px]" />
@@ -57,7 +57,7 @@ export default function MapEmbedSection({ data }: MapEmbedSectionProps) {
             </p>
           )}
           {title && (
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-2xl font-semibold text-slate-800 tracking-tight leading-tight mb-3">
               {title}
             </h2>
           )}
@@ -65,7 +65,7 @@ export default function MapEmbedSection({ data }: MapEmbedSectionProps) {
         </div>
 
         {/* Map Container and Card Overlay Grid */}
-        <div className="relative max-w-5xl mx-auto">
+        <div className="relative max-w-7xl mx-auto">
           <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-all duration-300 hover:shadow-md">
             {/* Map Iframe */}
             <div className="relative h-[400px] md:h-[500px] w-full rounded-xl overflow-hidden bg-slate-100 border border-slate-100">
@@ -107,10 +107,10 @@ export default function MapEmbedSection({ data }: MapEmbedSectionProps) {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-0.5">
+                  <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-1">
                     Our Address
                   </p>
-                  <p className="text-sm font-semibold text-slate-700 leading-relaxed max-w-xl">
+                  <p className="text-sm font-normal text-slate-600 leading-relaxed max-w-xl">
                     {displayAddress}
                   </p>
                 </div>
@@ -121,7 +121,7 @@ export default function MapEmbedSection({ data }: MapEmbedSectionProps) {
                   href={`https://maps.google.com/?q=${encodeURIComponent(displayAddress)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-10 items-center justify-center rounded-xl bg-[#F7A707] px-6 text-xs font-bold uppercase tracking-wider text-white shadow-sm transition-all duration-200 hover:bg-[#e09a06]"
+                  className="inline-flex h-10 items-center justify-center rounded-xl bg-[#F7A707] px-6 text-xs font-medium uppercase tracking-wider text-white shadow-sm transition-all duration-200 hover:bg-[#e09a06]"
                 >
                   Get Directions
                 </a>

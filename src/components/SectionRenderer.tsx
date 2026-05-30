@@ -1,4 +1,5 @@
 import HeroSection from "./sections/HeroSection";
+import HeroSlider from "./sections/HeroSlider";
 import StatsContentSection from "./sections/StatsContentSection";
 import ContentWithImageSection from "./sections/ContentWithImageSection";
 import IconCardGridSection from "./sections/IconCardGridSection";
@@ -116,8 +117,11 @@ export default function SectionRenderer({
             ) : null;
 
           case "paragraph_editor":
-            return section.content ? (
-              <ParagraphEditorSection key={key} data={section.content} />
+            return section.sectionData || section.content ? (
+              <ParagraphEditorSection
+                key={key}
+                data={section.sectionData || section.content}
+              />
             ) : null;
 
           case "inquiry_form":
@@ -131,6 +135,11 @@ export default function SectionRenderer({
           case "map_embed":
             return section.sectionData ? (
               <MapEmbedSection key={key} data={section.sectionData} />
+            ) : null;
+          case "hero_slider":
+          case "heroslider":
+            return section.sectionData ? (
+              <HeroSlider key={key} data={section.sectionData} />
             ) : null;
           default:
             return null;

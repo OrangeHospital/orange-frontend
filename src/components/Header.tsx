@@ -123,9 +123,6 @@ export default function Header() {
           })}
         </nav>
 
-        {/* CTA Button Right - Removed as requested */}
-        <div className="hidden lg:block w-0 h-0" />
-
         {/* Mobile Navigation Toggle */}
         <div className="flex lg:hidden">
           <button
