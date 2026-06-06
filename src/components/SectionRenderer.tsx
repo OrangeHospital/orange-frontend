@@ -3,6 +3,7 @@ import HeroSlider from "./sections/HeroSlider";
 import StatsContentSection from "./sections/StatsContentSection";
 import ContentWithImageSection from "./sections/ContentWithImageSection";
 import IconCardGridSection from "./sections/IconCardGridSection";
+import ImageCardGridSection from "./sections/ImageCardGridSection";
 import TeamGridSection from "./sections/TeamGridSection";
 import CTASection from "./sections/CTASection";
 import AboutHeroSection from "./sections/AboutHeroSection";
@@ -58,6 +59,11 @@ export default function SectionRenderer({
           case "icon_card_grid":
             return section.sectionData ? (
               <IconCardGridSection key={key} data={section.sectionData} />
+            ) : null;
+
+          case "image_card_grid":
+            return section.sectionData ? (
+              <ImageCardGridSection key={key} data={section.sectionData} />
             ) : null;
 
           case "team_grid":

@@ -71,7 +71,7 @@ export default function RichTextContent({ content }: RichTextContentProps) {
 
     // Handle line breaks
     if (node.type === "linebreak") {
-      return <span key={index} className="block h-2" aria-hidden="true" />;
+      return <br key={index} />;
     }
 
     // Handle heading nodes
@@ -131,17 +131,7 @@ export default function RichTextContent({ content }: RichTextContentProps) {
           key={index}
           className="text-base md:text-lg text-[#4a5565] leading-relaxed mb-6 last:mb-0"
         >
-          {node.children?.map((child, i) => (
-            <React.Fragment key={i}>
-              {renderNode(child, i)}
-              {/* Safety: If next child is text and current is text, and no linebreak between them */}
-              {i < (node.children?.length || 0) - 1 &&
-                child.type === "text" &&
-                node.children?.[i + 1]?.type === "text" && (
-                  <span className="block h-2" aria-hidden="true" />
-                )}
-            </React.Fragment>
-          ))}
+          {node.children?.map((child, i) => renderNode(child, i))}
         </li>
       );
     }

@@ -38,7 +38,11 @@ export default function TeamGridSection({ data }: TeamGridSectionProps) {
   // Split description paragraphs if double-newlines are present
   const paragraphs = data.description ? data.description.split("\n\n") : [];
 
-  const renderDoctorCard = (member: (typeof members)[0], isMainRow = false) => {
+  const renderDoctorCard = (
+    member: (typeof members)[0],
+    isMainRow = false,
+    index = 0,
+  ) => {
     const photoContainer = (
       <div className="relative aspect-square w-full rounded-none overflow-visible mb-9 bg-slate-50 shadow-[0_4px_20px_rgba(0,0,0,0.02)] cursor-pointer">
         {member.photo?.fileUrl && isValidImageUrl(member.photo.fileUrl) ? (
@@ -80,7 +84,10 @@ export default function TeamGridSection({ data }: TeamGridSectionProps) {
     );
 
     return (
-      <div className="flex flex-col items-center h-full bg-transparent group w-full">
+      <div
+        key={`${member.name}-${index}`}
+        className="flex flex-col items-center h-full bg-transparent group w-full"
+      >
         {member.link ? (
           <Link
             href={
@@ -173,15 +180,17 @@ export default function TeamGridSection({ data }: TeamGridSectionProps) {
           {/* Top Row: 2 Doctors side-by-side (Centered on Desktop) */}
           {topRowMembers.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-16 max-w-3xl mx-auto justify-center">
-              {topRowMembers.map((member) => renderDoctorCard(member, true))}
+              {topRowMembers.map((member, idx) =>
+                renderDoctorCard(member, true, idx),
+              )}
             </div>
           )}
 
           {/* Bottom Row: 4 Doctors side-by-side */}
           {bottomRowMembers.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-16 max-w-6xl mx-auto">
-              {bottomRowMembers.map((member) =>
-                renderDoctorCard(member, false),
+              {bottomRowMembers.map((member, idx) =>
+                renderDoctorCard(member, false, idx),
               )}
             </div>
           )}

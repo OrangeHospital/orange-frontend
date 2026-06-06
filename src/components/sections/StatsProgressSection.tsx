@@ -25,75 +25,107 @@ export default function StatsProgressSection({
   // Split description paragraphs if double-newlines are present
   const paragraphs = description ? description.split("\n\n") : [];
 
-  // Micro-animation state for filling the progress bars on load
+  // Animation trigger on mount
   const [animate, setAnimate] = useState(false);
   useEffect(() => {
-    const timer = setTimeout(() => setAnimate(true), 200);
+    const timer = setTimeout(() => setAnimate(true), 250);
     return () => clearTimeout(timer);
   }, []);
 
   return (
-    <section className="py-16 md:py-24 bg-white select-none">
-      <div className="container mx-auto px-6 lg:px-8 max-w-7xl">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          {/* Left Column: Title and Details */}
-          <div className="lg:col-span-6 flex flex-col gap-6">
-            <div>
-              <span className="text-xs md:text-sm font-semibold tracking-widest text-[#F7A707] uppercase mb-2 block">
-                Orange Hospital Expertise
-              </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-slate-800 leading-tight tracking-wide border-l-2 border-[#F7A707] pl-4">
-                {title}
-              </h2>
-            </div>
+    <section className="relative overflow-hidden py-16 md:py-20 bg-[#FFFCF7] border-b border-slate-100/50 select-none">
+      {/* Decorative gradient glow backgrounds */}
+      <div className="absolute top-[-100px] right-[-100px] h-[300px] w-[300px] rounded-full bg-[#F7A707]/5 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[-100px] left-[-100px] h-[300px] w-[300px] rounded-full bg-[#EF641A]/5 blur-3xl pointer-events-none" />
 
-            <div className="flex flex-col gap-5 text-slate-500 font-light leading-relaxed text-sm md:text-base">
+      <div className="container mx-auto px-6 lg:px-8 max-w-7xl relative z-10">
+        {/* Top Header Block: Centered and Wider Text Layout */}
+        <div className="text-center mb-12 flex flex-col items-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-tight tracking-tight max-w-5xl mx-auto">
+            {title}
+          </h2>
+          <div className="h-1 w-20 bg-gradient-to-r from-[#F7A707] to-[#EF641A] mt-6 rounded-full" />
+
+          {paragraphs.length > 0 && (
+            <div className="mt-8 flex flex-col gap-5 text-slate-600 font-light leading-relaxed text-sm md:text-base lg:text-lg max-w-5xl mx-auto">
               {paragraphs.map((para, idx) => (
-                <p key={idx} className="text-justify">
+                <p key={idx} className="text-center">
                   {para}
                 </p>
               ))}
             </div>
-          </div>
-
-          {/* Right Column: Premium Progress Bars */}
-          <div className="lg:col-span-6 flex flex-col gap-8 lg:pt-6 w-full">
-            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-8 shadow-sm flex flex-col gap-8">
-              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest border-b border-slate-200/60 pb-4">
-                Hospital Performance Metres
-              </h3>
-
-              <div className="flex flex-col gap-6">
-                {stats.map((stat, idx) => {
-                  const targetWidth = `${stat.value}%`;
-                  return (
-                    <div key={idx} className="flex flex-col gap-2.5">
-                      {/* Metric Name & Percentage Labels */}
-                      <div className="flex justify-between items-end">
-                        <span className="text-xs sm:text-sm font-medium text-slate-700 tracking-wide">
-                          {stat.label}
-                        </span>
-                        <span className="text-xs sm:text-sm font-bold text-[#F7A707]">
-                          {stat.value}%
-                        </span>
-                      </div>
-
-                      {/* Sleek, Modern Progress Bar Track */}
-                      <div className="h-2 w-full bg-slate-200/70 rounded-full overflow-hidden">
-                        <div
-                          style={{
-                            width: animate ? targetWidth : "0%",
-                          }}
-                          className="h-full bg-[#F7A707] rounded-full transition-all duration-1000 ease-out shadow-[0_1px_3px_rgba(247,167,7,0.3)]"
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          )}
         </div>
+
+        {/* Bottom Block: Raw Circular progress loops, no card wrappers */}
+        {stats && stats.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-4xl mx-auto mt-16 w-full">
+            {stats.map((stat, idx) => {
+              const valueNum = parseInt(stat.value, 10) || 0;
+              const radius = 46;
+              const circumference = 2 * Math.PI * radius; // ~289.02
+              const strokeDashoffset = animate
+                ? circumference - (valueNum / 100) * circumference
+                : circumference;
+
+              return (
+                <div
+                  key={idx}
+                  className="group flex flex-col items-center justify-center text-center relative"
+                >
+                  {/* Circular Progress Ring with hover scale */}
+                  <div className="relative w-36 h-36 flex items-center justify-center mb-4 transition-transform duration-500 group-hover:scale-105">
+                    <svg className="w-full h-full transform -rotate-90">
+                      <defs>
+                        <linearGradient
+                          id={`grad-${idx}`}
+                          x1="0%"
+                          y1="0%"
+                          x2="100%"
+                          y2="100%"
+                        >
+                          <stop offset="0%" stopColor="#F7A707" />
+                          <stop offset="100%" stopColor="#EF641A" />
+                        </linearGradient>
+                      </defs>
+                      {/* Background Track Circle */}
+                      <circle
+                        cx="72"
+                        cy="72"
+                        r={radius}
+                        className="stroke-slate-100 fill-none"
+                        strokeWidth="6"
+                      />
+                      {/* Animated Progress Circle */}
+                      <circle
+                        cx="72"
+                        cy="72"
+                        r={radius}
+                        stroke={`url(#grad-${idx})`}
+                        className="fill-none transition-all duration-1000 ease-out"
+                        strokeWidth="8"
+                        strokeDasharray={circumference}
+                        strokeDashoffset={strokeDashoffset}
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                    {/* Center Percentage Display */}
+                    <div className="absolute flex flex-col items-center justify-center">
+                      <span className="text-2xl sm:text-3xl font-black text-slate-800 tracking-tight group-hover:text-[#EF641A] transition-colors duration-300">
+                        {stat.value}%
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Label Text */}
+                  <span className="text-xs sm:text-sm font-bold text-slate-700 tracking-wide group-hover:text-[#EF641A] transition-colors duration-300 max-w-[150px]">
+                    {stat.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </section>
   );

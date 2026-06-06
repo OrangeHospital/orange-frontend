@@ -181,6 +181,12 @@ interface SuccessStory {
   ogImage: string | null;
   isIndex: boolean;
   featuredImage: string | null;
+  media?: {
+    id: string;
+    altText?: string;
+    description?: string;
+    fileUrl: string;
+  } | null;
   createdBy: string | null;
   updatedBy: string | null;
   createdAt: string;

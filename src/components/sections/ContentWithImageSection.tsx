@@ -68,7 +68,7 @@ export default function ContentWithImageSection({
                     "Orange Hospital Infrastructure"
                   }
                   fill
-                  className="object-contain p-2"
+                  className="object-cover"
                   quality={95}
                 />
               ) : (

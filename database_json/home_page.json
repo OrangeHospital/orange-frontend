@@ -122,10 +122,12 @@
         "title": "Best of the medical infrastructure",
         "subtitle": "The infrastructure of Orange Hospital",
         "image": {
-          "id": "img_infra",
-          "fileUrl": "/icu_infrastructure.png",
-          "altText": "Hospital Infrastructure"
-        },
+    "id": "cmpv1rky1000cx6r17k6rsmni",
+    "title": "1.jpg",
+    "altText": "",
+    "caption": "",
+    "fileUrl": "page/e52a3115-7cea-403b-a755-5b11779fd24b.webp"
+},
         "imagePosition": "left",
         "points": [
           "7 Neonatal and Pediatric Ventilators including High Frequency Ventilators",
@@ -149,7 +151,7 @@
             "title": "Pediatric Surgery",
             "icon": "scissors",
             "description": "Specialized surgeries for children",
-            "link": ""
+            "link": "/doctors/dr-urvish-parikh"
           },
           {
             "title": "Pediatric Nephrologist",
@@ -161,37 +163,37 @@
             "title": "Pediatric Cardiologist",
             "icon": "heart",
             "description": "Heart care for infants & kids",
-            "link": ""
+            "link": "/doctors/divyesh-sadadiwala/"
           },
           {
             "title": "Pediatric Gastroenterologist",
             "icon": "droplet",
             "description": "Digestive system specialists",
-            "link": ""
+            "link": "/doctors/kinisha-patel/"
           },
           {
             "title": "Pediatric Neurologist",
             "icon": "brain",
             "description": "Nervous system treatments",
-            "link": ""
+            "link": "/doctors/harsh-patel/"
           },
           {
             "title": "Pediatric Hematooncologist",
             "icon": "shield",
             "description": "Blood & cancer experts",
-            "link": ""
+            "link": "/doctors/vaibhav-shah/"
           },
           {
             "title": "Pediatric Orthopedician",
             "icon": "bone",
             "description": "Bone and joint specialists",
-            "link": ""
+            "link": "/doctors/maulik-patel/"
           },
           {
             "title": "Pediatric Endocrinology",
             "icon": "flask",
             "description": "Hormone & growth specialists",
-            "link": ""
+            "link": "/doctors/ruchi-shah/"
           }
         ],
         "link": ""

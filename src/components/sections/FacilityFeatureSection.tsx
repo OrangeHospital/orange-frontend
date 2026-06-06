@@ -2,6 +2,31 @@
 
 import Image from "next/image";
 
+const isValidImageUrl = (url?: string) => {
+  if (!url) return false;
+  return (
+    url.startsWith("/") ||
+    url.startsWith("http://") ||
+    url.startsWith("https://") ||
+    !url.includes(":")
+  );
+};
+
+const getImageUrl = (url?: string) => {
+  if (!url) return "";
+  if (
+    url.startsWith("/") ||
+    url.startsWith("http://") ||
+    url.startsWith("https://")
+  ) {
+    return url;
+  }
+  const fileBase =
+    process.env.NEXT_PUBLIC_FILE_BASE_URL || "http://3.111.240.196:7071/share/";
+  const base = fileBase.endsWith("/") ? fileBase : `${fileBase}/`;
+  return `${base}${url}`;
+};
+
 interface FacilityFeatureSectionProps {
   data: {
     title?: string;
@@ -26,7 +51,11 @@ export default function FacilityFeatureSection({
   const title = data.title ?? "";
   const subtitle = data.subtitle ?? "";
   const description = data.description ?? "";
-  const imageUrl = data.image?.fileUrl ?? "/nicu_expertise.png";
+  const imageFileUrl = data.image?.fileUrl;
+  const hasValidImage = imageFileUrl && isValidImageUrl(imageFileUrl);
+  const imageUrl = hasValidImage
+    ? getImageUrl(imageFileUrl)
+    : "/nicu_expertise.png";
   const altText = data.image?.altText ?? title;
 
   return (

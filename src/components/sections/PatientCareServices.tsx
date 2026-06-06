@@ -2,10 +2,49 @@
 
 import Image from "next/image";
 
+const isValidImageUrl = (url?: string) => {
+  if (!url) return false;
+  return (
+    url.startsWith("/") ||
+    url.startsWith("http://") ||
+    url.startsWith("https://") ||
+    !url.includes(":")
+  );
+};
+
+const getImageUrl = (url?: string) => {
+  if (!url) return "";
+
+  if (
+    url.startsWith("/") ||
+    url.startsWith("http://") ||
+    url.startsWith("https://")
+  ) {
+    return url;
+  }
+
+  const fileBase =
+    process.env.NEXT_PUBLIC_FILE_BASE_URL || "http://3.111.240.196:7071/share/";
+
+  const base = fileBase.endsWith("/") ? fileBase : `${fileBase}/`;
+
+  return `${base}${url}`;
+};
+
+const resolveImageUrl = (img: string | { fileUrl: string } | undefined) => {
+  if (!img) return "";
+
+  const url = typeof img === "string" ? img : img.fileUrl;
+
+  if (!url) return "";
+
+  return isValidImageUrl(url) ? getImageUrl(url) : "";
+};
+
 interface CareCard {
-  title: string;
-  description: string;
-  image: string;
+  title?: string;
+  description?: string;
+  image?: string | { fileUrl: string };
 }
 
 interface PatientCareServicesProps {
@@ -20,109 +59,113 @@ interface PatientCareServicesProps {
 export default function PatientCareServices({
   data,
 }: PatientCareServicesProps) {
-  const title = data.title ?? "Patient Support Services";
-  const subtitle =
-    data.subtitle ??
-    "Holistic Clinical Environments Designed For Comfort & Healing";
+  const title = data.title;
+  const subtitle = data.subtitle;
 
-  const inpatient = data.inpatient ?? {
-    title: "INPATIENT SERVICES",
-    description:
-      "We Have 5 Special Rooms with Kids Friendly Environment with all basic infrastructures like TV, AC, Refrigerator, Geyser, Sharing rooms also available.",
-    image: "/icu_infrastructure.png",
-  };
+  // Filter out services that are completely undefined or have no content
+  const services = [data.inpatient, data.outpatient].filter((service) => {
+    if (!service) return false;
+    return service.title || service.description || service.image;
+  }) as CareCard[];
 
-  const outpatient = data.outpatient ?? {
-    title: "OUTPATIENT SERVICES",
-    description:
-      "We provide outpatient services to our NICU graduates, growth & Development Monitoring, High Risk New Born Follow up, their Vaccination, and routine illnesses.",
-    image: "/nicu_expertise.png",
-  };
+  if (services.length === 0 && !title && !subtitle) return null;
 
   return (
-    <section className="py-20 lg:py-24 bg-slate-50/50 border-t border-slate-100">
-      <div className="container mx-auto px-6 max-w-7xl">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#EF641A] block mb-2">
-            Patient Experience
-          </span>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-4">
-            {title}
-          </h2>
-          <p className="text-base sm:text-lg font-semibold text-slate-500 max-w-2xl mx-auto">
-            {subtitle}
-          </p>
-        </div>
+    <section className="py-20 md:py-28 bg-gradient-to-b from-white to-slate-50 overflow-hidden">
+      <div className="container mx-auto px-6 max-w-6xl">
+        {/* Header */}
+        {(title || subtitle) && (
+          <div className="text-center max-w-3xl mx-auto mb-20">
+            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-orange-50 text-[#EF641A] text-xs font-bold uppercase tracking-[0.2em] mb-5">
+              Patient Experience
+            </span>
 
-        {/* Dual Card Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 max-w-6xl mx-auto">
-          {/* Card 1: Inpatient Services */}
-          <div className="bg-white border border-slate-100 rounded-[2rem] overflow-hidden shadow-md hover:shadow-2xl hover:border-slate-200/60 hover:-translate-y-1 transition-all duration-300 flex flex-col group">
-            {/* Top Image Frame */}
-            <div className="relative h-60 sm:h-72 w-full overflow-hidden bg-slate-100">
-              <Image
-                src={inpatient.image}
-                alt={inpatient.title}
-                fill
-                sizes="(max-w-1024px) 100vw, 50vw"
-                className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-              />
-            </div>
+            {title && (
+              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-5">
+                {title}
+              </h2>
+            )}
 
-            {/* Solid Bold Orange-to-Amber Header Bar */}
-            <div className="bg-gradient-to-r from-[#F7A707] to-[#EF641A] py-4 px-6 text-center">
-              <h3 className="text-lg md:text-xl font-black tracking-wider text-white uppercase select-none">
-                {inpatient.title}
-              </h3>
-            </div>
+            {title && (
+              <div className="w-20 h-1 bg-[#EF641A] mx-auto rounded-full mb-6" />
+            )}
 
-            {/* Description Body */}
-            <div className="p-8 flex-grow flex flex-col justify-between">
-              <p className="text-slate-600 text-sm md:text-base leading-relaxed mb-6 font-medium">
-                {inpatient.description}
+            {subtitle && (
+              <p className="text-slate-600 text-lg leading-relaxed">
+                {subtitle}
               </p>
-
-              {/* Action accent */}
-              <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
-                <div className="w-1/4 h-full bg-[#F7A707] group-hover:w-full transition-all duration-700" />
-              </div>
-            </div>
+            )}
           </div>
+        )}
 
-          {/* Card 2: Outpatient Services */}
-          <div className="bg-white border border-slate-100 rounded-[2rem] overflow-hidden shadow-md hover:shadow-2xl hover:border-slate-200/60 hover:-translate-y-1 transition-all duration-300 flex flex-col group">
-            {/* Top Image Frame */}
-            <div className="relative h-60 sm:h-72 w-full overflow-hidden bg-slate-100">
-              <Image
-                src={outpatient.image}
-                alt={outpatient.title}
-                fill
-                sizes="(max-w-1024px) 100vw, 50vw"
-                className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
-              />
-            </div>
+        {/* Timeline */}
+        {services.length > 0 && (
+          <div className="relative">
+            {/* Center Line */}
+            {services.length > 1 && (
+              <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-slate-200 -translate-x-1/2" />
+            )}
 
-            {/* Solid Bold Orange-to-Amber Header Bar */}
-            <div className="bg-gradient-to-r from-[#F7A707] to-[#EF641A] py-4 px-6 text-center">
-              <h3 className="text-lg md:text-xl font-black tracking-wider text-white uppercase select-none">
-                {outpatient.title}
-              </h3>
-            </div>
+            {services.map((service, index) => {
+              const isLeft = index % 2 === 0;
+              const imageUrl = resolveImageUrl(service.image);
 
-            {/* Description Body */}
-            <div className="p-8 flex-grow flex flex-col justify-between">
-              <p className="text-slate-600 text-sm md:text-base leading-relaxed mb-6 font-medium">
-                {outpatient.description}
-              </p>
+              return (
+                <div
+                  key={index}
+                  className={`relative mb-12 flex items-center ${
+                    isLeft ? "md:justify-start" : "md:justify-end"
+                  }`}
+                >
+                  {/* Dot */}
+                  {services.length > 1 && (
+                    <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 z-20 items-center justify-center">
+                      <div className="w-5 h-5 rounded-full bg-[#EF641A] border-4 border-white shadow-xl" />
+                    </div>
+                  )}
 
-              {/* Action accent */}
-              <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden">
-                <div className="w-1/4 h-full bg-teal-500 group-hover:w-full transition-all duration-700" />
-              </div>
-            </div>
+                  {/* Card */}
+                  <div className="w-full md:w-[46%] group">
+                    <div className="bg-white rounded-2xl overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:-translate-y-1.5 hover:shadow-[0_15px_45px_rgba(0,0,0,0.08)] transition-all duration-500">
+                      {/* Image */}
+                      {imageUrl && (
+                        <div className="relative h-48 overflow-hidden bg-slate-50">
+                          <Image
+                            src={imageUrl}
+                            alt={service.title || "Care Service"}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-700"
+                          />
+                        </div>
+                      )}
+
+                      {/* Content */}
+                      {(service.title || service.description) && (
+                        <div className="p-6">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full bg-orange-50 text-[#EF641A] text-[10px] font-semibold uppercase tracking-wider mb-3">
+                            Care Service
+                          </span>
+
+                          {service.title && (
+                            <h3 className="text-xl font-bold text-slate-900 mb-3">
+                              {service.title}
+                            </h3>
+                          )}
+
+                          {service.description && (
+                            <p className="text-slate-500 text-sm leading-relaxed">
+                              {service.description}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        </div>
+        )}
       </div>
     </section>
   );

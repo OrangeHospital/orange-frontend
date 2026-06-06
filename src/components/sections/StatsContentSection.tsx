@@ -1,5 +1,20 @@
 import Image from "next/image";
 
+const getImageUrl = (url?: string) => {
+  if (!url) return "";
+  if (
+    url.startsWith("/") ||
+    url.startsWith("http://") ||
+    url.startsWith("https://")
+  ) {
+    return url;
+  }
+  const fileBase =
+    process.env.NEXT_PUBLIC_FILE_BASE_URL || "http://3.111.240.196:7071/share/";
+  const base = fileBase.endsWith("/") ? fileBase : `${fileBase}/`;
+  return `${base}${url}`;
+};
+
 interface StatsContentSectionProps {
   data: PageSection["content"];
 }
@@ -54,12 +69,16 @@ export default function StatsContentSection({
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center mt-12 md:mt-16 max-w-5xl mx-auto">
             {/* Left Column: Content */}
             <div className="text-left order-2 lg:order-1">
-              <span className="text-[#F7A707] font-semibold text-md sm:text-sm uppercase tracking-wider mb-2 block">
-                We specialize in Neonatal & Pediatric Critical Care
-              </span>
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-3 leading-snug text-slate-800 tracking-tight">
-                Expertise Care of Your Child.
-              </h3>
+              {data.tagline && (
+                <span className="text-[#F7A707] font-semibold text-md sm:text-sm uppercase tracking-wider mb-2 block">
+                  {data.tagline}
+                </span>
+              )}
+              {data.contentTitle && (
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-semibold mb-3 leading-snug text-slate-800 tracking-tight">
+                  {data.contentTitle}
+                </h3>
+              )}
               <p className="text-slate-500 text-md sm:text-md leading-relaxed mb-6 font-normal">
                 {data.description}
               </p>
@@ -81,19 +100,17 @@ export default function StatsContentSection({
             </div>
 
             {/* Right Column: Image */}
-            {data.image?.fileUrl &&
-              (data.image.fileUrl.startsWith("/") ||
-                data.image.fileUrl.startsWith("http")) && (
-                <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-slate-50 border border-slate-100/50 order-1 lg:order-2">
-                  <Image
-                    src={data.image.fileUrl}
-                    alt={data.image.altText || "Expertise Care"}
-                    fill
-                    className="object-cover"
-                    quality={90}
-                  />
-                </div>
-              )}
+            {data.image?.fileUrl && (
+              <div className="relative aspect-[4/3] w-full rounded-xl overflow-hidden bg-slate-50 border border-slate-100/50 order-1 lg:order-2">
+                <Image
+                  src={getImageUrl(data.image.fileUrl)}
+                  alt={data.image.altText || "Expertise Care"}
+                  fill
+                  className="object-cover"
+                  quality={90}
+                />
+              </div>
+            )}
           </div>
         )}
       </div>

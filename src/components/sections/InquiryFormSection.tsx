@@ -208,6 +208,7 @@ export default function InquiryFormSection({
       }
 
       await formSubmit({
+        formId: data.formId,
         formValues,
         recaptchaToken,
       });

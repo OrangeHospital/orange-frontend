@@ -1,38 +1,93 @@
 "use client";
 
+import Image from "next/image";
+
 interface HighlightQuoteSectionProps {
   data: {
     description?: string;
+    image?: {
+      id?: string;
+      fileUrl?: string;
+      altText?: string;
+    };
   };
 }
+
+const isValidImageUrl = (url?: string) => {
+  if (!url) return false;
+  return (
+    url.startsWith("/") ||
+    url.startsWith("http://") ||
+    url.startsWith("https://") ||
+    !url.includes(":")
+  );
+};
+
+const getImageUrl = (url?: string) => {
+  if (!url) return "";
+  if (
+    url.startsWith("/") ||
+    url.startsWith("http://") ||
+    url.startsWith("https://")
+  ) {
+    return url;
+  }
+  const fileBase =
+    process.env.NEXT_PUBLIC_FILE_BASE_URL || "http://3.111.240.196:7071/share/";
+  const base = fileBase.endsWith("/") ? fileBase : `${fileBase}/`;
+  return `${base}${url}`;
+};
 
 export default function HighlightQuoteSection({
   data,
 }: HighlightQuoteSectionProps) {
-  const quoteText = data.description || "";
+  const description = data.description || "";
+  const imageUrl =
+    data.image?.fileUrl && isValidImageUrl(data.image.fileUrl)
+      ? getImageUrl(data.image.fileUrl)
+      : "/hero_baby.png";
 
   return (
-    <section className="relative py-16 md:py-24 bg-slate-50 overflow-hidden flex items-center justify-center border-y border-slate-100">
-      {/* Decorative quote mark in the background */}
-      <div className="absolute right-10 bottom-0 text-[180px] md:text-[240px] text-slate-100/60 font-serif leading-none select-none select-none pointer-events-none">
-        ”
+    <section className="relative w-full bg-[#050811] overflow-hidden min-h-[450px] md:min-h-[500px] flex flex-col md:flex-row">
+      {/* Left side: Elegant Quote Content */}
+      <div className="w-full md:w-[45%] flex flex-col justify-center px-8 py-16 md:py-24 md:pl-16 lg:pl-24 xl:pl-32 z-10 bg-[#050811]">
+        {/* Top elegant quote icon */}
+        <span className="text-[#F7A707] text-6xl md:text-7xl font-serif leading-none mb-2 select-none -ml-3 block">
+          “
+        </span>
+
+        {description && (
+          <blockquote className="text-lg sm:text-xl md:text-2xl font-light text-slate-100 leading-relaxed italic pr-4 md:pr-8">
+            {description}
+          </blockquote>
+        )}
+
+        {/* Bottom decorative accent line */}
+        <div className="h-0.5 w-12 bg-gradient-to-r from-[#F7A707] to-[#EF641A] mt-6 rounded-full" />
       </div>
 
-      <div className="container mx-auto px-6 lg:px-8 max-w-4xl text-center relative z-10">
-        <div className="flex flex-col items-center">
-          {/* Top Elegant Quote Icon */}
-          <span className="text-[#F7A707] text-5xl md:text-6xl font-serif leading-none mb-4 select-none">
-            “
-          </span>
-
-          {/* Quote Content */}
-          <blockquote className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-light text-slate-700 leading-relaxed italic px-4 md:px-8">
-            {quoteText}
-          </blockquote>
-
-          {/* Bottom Elegant Accent */}
-          <div className="h-0.5 w-10 bg-slate-200 mt-8 rounded-full" />
-        </div>
+      {/* Right side: Image with Gradient Fade */}
+      <div className="relative w-full md:w-[55%] min-h-[350px] md:min-h-full md:absolute md:right-0 md:top-0 md:bottom-0">
+        {imageUrl ? (
+          <>
+            <Image
+              src={imageUrl}
+              alt={data.image?.altText || "Highlight Quote"}
+              fill
+              className="object-cover"
+              quality={95}
+              priority
+            />
+            {/* Desktop Gradient Overlay (Left to Right, constrained to left 30% of the image) */}
+            <div className="absolute inset-y-0 left-0 w-[30%] bg-gradient-to-r from-[#050811] to-transparent pointer-events-none z-20 hidden md:block" />
+            {/* Mobile Gradient Overlay (Bottom to Top, constrained to top 30% of the image) */}
+            <div className="absolute inset-x-0 top-0 h-[30%] bg-gradient-to-b from-[#050811] to-transparent pointer-events-none z-20 md:hidden" />
+          </>
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-slate-900 text-slate-500">
+            No Image
+          </div>
+        )}
       </div>
     </section>
   );

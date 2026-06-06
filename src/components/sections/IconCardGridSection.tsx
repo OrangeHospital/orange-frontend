@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import * as LucideIcons from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -125,34 +126,50 @@ export default function IconCardGridSection({
             {isFacilitiesVariant ? (
               /* Facilities Grid */
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                {data.cards.map((card, index) => (
-                  <div
-                    key={index}
-                    className="group bg-white rounded-none border-0 shadow-none overflow-hidden flex flex-col h-full"
-                  >
-                    {/* Facility Image */}
-                    <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-50 rounded-none">
-                      {card.icon ? (
-                        <Image
-                          src={card.icon}
-                          alt={card.title}
-                          fill
-                          className="object-cover rounded-none transition-transform duration-500 group-hover:scale-105"
-                          quality={90}
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs rounded-none">
-                          Facility Image
-                        </div>
-                      )}
-                    </div>
+                {data.cards.map((card, index) => {
+                  const cardContent = (
+                    <>
+                      {/* Facility Image */}
+                      <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-50 rounded-none">
+                        {card.icon ? (
+                          <Image
+                            src={card.icon}
+                            alt={card.title}
+                            fill
+                            className="object-cover rounded-none transition-transform duration-500 group-hover:scale-105"
+                            quality={90}
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-300 text-xs rounded-none">
+                            Facility Image
+                          </div>
+                        )}
+                      </div>
 
-                    {/* Facility Title */}
-                    <div className="bg-[#1E5CB8] text-white py-3 px-4 text-center font-semibold text-xs sm:text-sm flex-1 flex items-center justify-center rounded-none select-none">
-                      {card.title}
+                      {/* Facility Title */}
+                      <div className="bg-[#1E5CB8] text-white py-3 px-4 text-center font-semibold text-xs sm:text-sm flex-1 flex items-center justify-center rounded-none select-none">
+                        {card.title}
+                      </div>
+                    </>
+                  );
+
+                  return card.link ? (
+                    <Link
+                      key={index}
+                      href={card.link}
+                      className="group bg-white rounded-none border-0 shadow-none overflow-hidden flex flex-col h-full cursor-pointer"
+                    >
+                      {cardContent}
+                    </Link>
+                  ) : (
+                    <div
+                      key={index}
+                      className="group bg-white rounded-none border-0 shadow-none overflow-hidden flex flex-col h-full"
+                    >
+                      {cardContent}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               /* Specialty Grid */
@@ -160,11 +177,8 @@ export default function IconCardGridSection({
                 {data.cards.map((card, index) => {
                   const Icon = getIcon(card.icon);
 
-                  return (
-                    <div
-                      key={index}
-                      className="group p-4 transition-all duration-300 text-center flex flex-col items-center justify-center select-none"
-                    >
+                  const cardContent = (
+                    <>
                       {/* Icon */}
                       <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/80 border border-[#F7A707]/10 shadow-sm text-[#F7A707] transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
                         <Icon className="h-10 w-10 stroke-[1.25]" />
@@ -181,6 +195,23 @@ export default function IconCardGridSection({
                           {card.description}
                         </p>
                       )}
+                    </>
+                  );
+
+                  return card.link ? (
+                    <Link
+                      key={index}
+                      href={card.link}
+                      className="group p-4 transition-all duration-300 text-center flex flex-col items-center justify-center select-none cursor-pointer"
+                    >
+                      {cardContent}
+                    </Link>
+                  ) : (
+                    <div
+                      key={index}
+                      className="group p-4 transition-all duration-300 text-center flex flex-col items-center justify-center select-none"
+                    >
+                      {cardContent}
                     </div>
                   );
                 })}
