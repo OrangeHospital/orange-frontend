@@ -265,17 +265,6 @@ export default function Footer() {
             © {new Date().getFullYear()} Orange Children Hospital. All Rights
             Reserved.
           </p>
-          <div className="flex gap-4 text-xs text-gray-500">
-            <Link
-              href="/privacy"
-              className="hover:text-white transition-colors"
-            >
-              Privacy Policy
-            </Link>
-            <Link href="/terms" className="hover:text-white transition-colors">
-              Terms of Use
-            </Link>
-          </div>
         </div>
       </div>
     </footer>

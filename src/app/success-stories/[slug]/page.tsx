@@ -187,7 +187,7 @@ export default async function SuccessStoryDetailPage({
                   <Image
                     src={getImageUrl(story.media.fileUrl)}
                     alt={story.media.altText || story.name}
-                    className="w-full h-full object-fit"
+                    className="w-full h-full object-cover"
                     width={1200}
                     height={800}
                     priority

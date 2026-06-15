@@ -2,11 +2,14 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 export default function Header() {
   const pathname = usePathname();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   // Navigation items simplified to match the real website screenshot
   const navItems = [
@@ -127,23 +130,148 @@ export default function Header() {
         <div className="flex lg:hidden">
           <button
             type="button"
-            className="inline-flex items-center justify-center rounded-md p-2 text-gray-700 hover:bg-gray-100"
-            aria-label="Toggle menu"
+            onClick={() => setMobileMenuOpen(true)}
+            className="inline-flex items-center justify-center rounded-md p-2 text-slate-700 hover:bg-slate-100 cursor-pointer transition-colors duration-200"
+            aria-label="Open menu"
           >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="1.5"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-              />
-            </svg>
+            <Menu className="h-6 w-6" />
           </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu Backdrop & Drawer */}
+      <div
+        className={`fixed inset-0 z-50 lg:hidden transition-all duration-300 ${
+          mobileMenuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
+      >
+        {/* Backdrop */}
+        <div
+          className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+
+        {/* Drawer panel */}
+        <div
+          className={`fixed inset-y-0 right-0 z-50 w-full max-w-xs bg-white px-6 py-6 shadow-2xl flex flex-col h-full overflow-y-auto transition-transform duration-300 ease-out transform ${
+            mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          }`}
+        >
+          {/* Header: Logo & Close Button */}
+          <div className="flex items-center justify-between pb-6 border-b border-slate-100">
+            <Link
+              href="/"
+              onClick={() => setMobileMenuOpen(false)}
+              className="flex items-center"
+            >
+              <Image
+                src="/orange-logo.png"
+                alt="Orange Children Hospital Logo"
+                width={130}
+                height={38}
+                priority
+                className="h-9 w-auto object-contain"
+              />
+            </Link>
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(false)}
+              className="rounded-md p-2 text-slate-500 hover:bg-slate-100 cursor-pointer transition-colors duration-200"
+              aria-label="Close menu"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          </div>
+
+          {/* Nav Links */}
+          <nav className="mt-6 flex-1 flex flex-col gap-1">
+            {navItems.map((item) => {
+              let isActive =
+                item.href === "/"
+                  ? pathname === "/" || pathname === ""
+                  : pathname.startsWith(item.href);
+
+              if (
+                item.label === "Patient Reviews" &&
+                (pathname.startsWith("/testimonial") ||
+                  pathname.startsWith("/success-stories"))
+              ) {
+                isActive = true;
+              }
+
+              if (item.hasDropdown && item.dropdownItems) {
+                const isDropdownExpanded = activeDropdown === item.label;
+                return (
+                  <div key={item.label} className="flex flex-col">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setActiveDropdown(
+                          isDropdownExpanded ? null : item.label,
+                        )
+                      }
+                      className={`flex items-center justify-between w-full px-4 py-3 rounded-lg text-left text-base font-semibold transition-colors duration-200 cursor-pointer ${
+                        isActive
+                          ? "text-[#F7A707] bg-orange-50/50"
+                          : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                      }`}
+                    >
+                      <span>{item.label}</span>
+                      <ChevronDown
+                        className={`h-4 w-4 text-slate-500 transition-transform duration-200 ${
+                          isDropdownExpanded ? "rotate-180 text-[#F7A707]" : ""
+                        }`}
+                      />
+                    </button>
+
+                    {/* Dropdown Items */}
+                    <div
+                      className={`overflow-hidden transition-all duration-300 pl-4 flex flex-col gap-1 border-l-2 border-slate-100 ml-4 mt-1 ${
+                        isDropdownExpanded
+                          ? "max-h-40 opacity-100 py-1"
+                          : "max-h-0 opacity-0"
+                      }`}
+                    >
+                      {item.dropdownItems.map((subItem) => {
+                        const isSubActive = pathname === subItem.href;
+                        return (
+                          <Link
+                            key={subItem.label}
+                            href={subItem.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`px-4 py-2.5 rounded-md text-sm font-semibold transition-colors duration-200 ${
+                              isSubActive
+                                ? "text-[#F7A707] bg-orange-50/30"
+                                : "text-slate-600 hover:text-slate-900 hover:bg-slate-50/60"
+                            }`}
+                          >
+                            {subItem.label}
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`px-4 py-3 rounded-lg text-base font-semibold transition-colors duration-200 ${
+                    isActive
+                      ? "text-[#F7A707] bg-orange-50/50"
+                      : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
         </div>
       </div>
     </header>

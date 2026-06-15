@@ -132,7 +132,7 @@ export default function HorizontalTimelineSection({
                   <div className="flex gap-8 px-[20px] relative z-10">
                     {items.map((item, index) => {
                       const isTop = item.position === "top";
-                      const stepNumber = String(index + 1).padStart(2, "0");
+                      // const stepNumber = String(index + 1).padStart(2, "0");
 
                       return (
                         <div
@@ -185,9 +185,9 @@ export default function HorizontalTimelineSection({
                                 <span className="absolute top-3 right-3 text-[#EF641A]/30 group-hover:text-[#EF641A] transition-colors duration-300">
                                   <ClipboardList className="w-4 h-4 stroke-[1.5]" />
                                 </span>
-                                <div className="text-xs font-bold text-[#EF641A] mb-1.5 tracking-wider">
+                                {/* <div className="text-xs font-bold text-[#EF641A] mb-1.5 tracking-wider">
                                   STEP {stepNumber}
-                                </div>
+                                </div> */}
                                 <h3 className="text-sm font-semibold text-slate-800 leading-snug group-hover:text-[#F7A707] transition-colors duration-300">
                                   {item.title}
                                 </h3>
@@ -210,50 +210,30 @@ export default function HorizontalTimelineSection({
             </div>
 
             {/* Mobile Vertical Layout */}
-            <div className="block md:hidden relative pl-8 py-4">
-              {/* Vertical Timeline Line */}
-              <div className="absolute top-0 bottom-0 left-[15px] w-1 bg-gradient-to-b from-[#F7A707]/60 via-[#EF641A]/60 to-[#F7A707]/60 rounded-full" />
+            <div className="block md:hidden py-4">
+              <div className="space-y-4">
+                {items.map((item, index) => (
+                  <div
+                    key={index}
+                    className="relative pl-8 pb-4 border-l-2 border-[#F7A707]/30"
+                  >
+                    {/* Timeline Node */}
+                    <div className="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-gradient-to-tr from-[#F7A707] to-[#EF641A]" />
 
-              <div className="space-y-8">
-                {items.map((item, index) => {
-                  const stepNumber = String(index + 1).padStart(2, "0");
-                  const isEven = index % 2 === 0;
+                    {/* Card */}
+                    <div className="bg-white rounded-xl border border-slate-100 p-4 shadow-sm">
+                      <h3 className="text-sm font-semibold text-slate-800">
+                        {item.title}
+                      </h3>
 
-                  return (
-                    <div
-                      key={index}
-                      className="relative flex flex-col items-start"
-                    >
-                      {/* Vertical Node */}
-                      <div className="absolute left-[-29px] top-1.5 z-10 flex items-center justify-center">
-                        <div className="w-5 h-5 rounded-full border-4 border-white bg-gradient-to-tr from-[#F7A707] to-[#EF641A] shadow-md" />
-                      </div>
-
-                      {/* Card Content */}
-                      <div className="w-full bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-all duration-300 relative">
-                        <div className="flex items-center justify-between mb-2">
-                          <span
-                            className={`text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full ${
-                              isEven
-                                ? "text-[#F7A707] bg-[#F7A707]/5"
-                                : "text-[#EF641A] bg-[#EF641A]/5"
-                            }`}
-                          >
-                            STEP {stepNumber}
-                          </span>
-                        </div>
-                        <h3 className="text-sm font-semibold text-slate-800 leading-snug mb-1">
-                          {item.title}
-                        </h3>
-                        {item.description && (
-                          <p className="text-xs text-slate-500 font-light mt-1.5 leading-relaxed">
-                            {item.description}
-                          </p>
-                        )}
-                      </div>
+                      {item.description && (
+                        <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                          {item.description}
+                        </p>
+                      )}
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             </div>
           </div>

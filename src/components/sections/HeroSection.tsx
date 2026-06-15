@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { fetchSocial } from "@/lib/api";
 
 interface HeroSectionProps {
@@ -126,6 +127,33 @@ export default function HeroSection({ data }: HeroSectionProps) {
                       {slide.titleHighlight}
                     </span>
                   </h1>
+
+                  {/* Subtitle */}
+                  {slide.subtitle && (
+                    <p className="mt-6 text-sm sm:text-base md:text-lg text-slate-200 font-light leading-relaxed max-w-md sm:max-w-lg">
+                      {slide.subtitle}
+                    </p>
+                  )}
+
+                  {/* Call to Actions */}
+                  <div className="mt-10 flex flex-wrap gap-4 items-center">
+                    {slide.primaryCta && (
+                      <Link
+                        href={slide.primaryCta.href}
+                        className="inline-block bg-[#F7A707] hover:bg-[#e69e06] text-white px-7 py-3.5 rounded-lg text-sm sm:text-base font-bold shadow-lg shadow-[#F7A707]/20 transition-all duration-300 transform hover:-translate-y-0.5"
+                      >
+                        {slide.primaryCta.label}
+                      </Link>
+                    )}
+                    {slide.secondaryCta && (
+                      <Link
+                        href={slide.secondaryCta.href}
+                        className="inline-block bg-white/10 hover:bg-white/15 text-white border border-white/20 px-7 py-3.5 rounded-lg text-sm sm:text-base font-bold backdrop-blur-sm transition-all duration-300 transform hover:-translate-y-0.5"
+                      >
+                        {slide.secondaryCta.label}
+                      </Link>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

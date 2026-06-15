@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local and agent config ignores
+/database_json/
+AGENTS.md
+CLAUDE.md
+

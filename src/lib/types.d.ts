@@ -49,6 +49,9 @@ interface PageSection {
       bio?: string;
       ishighlight?: boolean;
       link?: string;
+      facebook?: string;
+      twitter?: string;
+      instagram?: string;
     }>;
     points?: string[];
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
