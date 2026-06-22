@@ -3,22 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-// import { fetchSocial } from "@/lib/api";
-
-const getImageUrl = (url?: string) => {
-  if (!url) return "";
-  if (
-    url.startsWith("/") ||
-    url.startsWith("http://") ||
-    url.startsWith("https://")
-  ) {
-    return url;
-  }
-  const fileBase =
-    process.env.NEXT_PUBLIC_FILE_BASE_URL || "http://3.111.240.196:7071/share/";
-  const base = fileBase.endsWith("/") ? fileBase : `${fileBase}/`;
-  return `${base}${url}`;
-};
+import { getImageUrl } from "@/lib/utils";
 
 interface SlideImage {
   id?: string;
@@ -62,6 +47,7 @@ interface ProcessedSlide {
 
 export default function HeroSlider({ data }: HeroSliderProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
   // Get slides from backend CMS data
   const rawSlides: SlideData[] = data?.slides || [];
 
@@ -94,21 +80,25 @@ export default function HeroSlider({ data }: HeroSliderProps) {
     };
   });
 
-  // Auto-play every 5 seconds
+  // Auto-play every 5 seconds, unless hovered
   useEffect(() => {
-    if (slides.length <= 1) return;
+    if (slides.length <= 1 || isHovered) return;
     const timer = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % slides.length);
     }, 5000);
     return () => clearInterval(timer);
-  }, [slides.length]);
+  }, [slides.length, isHovered]);
 
   if (slides.length === 0) {
     return null;
   }
 
   return (
-    <section className="relative w-full h-[75vh] md:h-[80vh] lg:h-[85vh] min-h-[500px] md:min-h-[600px] overflow-hidden bg-slate-900">
+    <section
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="relative w-full h-[75vh] md:h-[80vh] lg:h-[85vh] min-h-[500px] md:min-h-[600px] overflow-hidden bg-slate-900"
+    >
       {/* Slides Container with Hardware-Accelerated Cross-fade */}
       <div className="absolute inset-0 w-full h-full">
         {slides.map((slide: ProcessedSlide, index: number) => {

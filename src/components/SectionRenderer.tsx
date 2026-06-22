@@ -18,6 +18,7 @@ import HorizontalTimelineSection from "./sections/HorizontalTimelineSection";
 import ParagraphEditorSection from "./sections/ParagraphEditorSection";
 import InquiryFormSection from "./sections/InquiryFormSection";
 import MapEmbedSection from "./sections/MapEmbedSection";
+import LogoGridSection from "./sections/LogoGridSection";
 
 interface SectionRendererProps {
   sections: PageSection[];
@@ -138,6 +139,13 @@ export default function SectionRenderer({
                 settings={settings}
               />
             );
+          case "logo_grid":
+            return section.sectionData || section.content ? (
+              <LogoGridSection
+                key={key}
+                data={section.sectionData || section.content}
+              />
+            ) : null;
           case "map_embed":
             return section.sectionData ? (
               <MapEmbedSection key={key} data={section.sectionData} />

@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         hostname: "3.111.240.196",
         port: "7071",
       },
+      {
+        protocol: "https",
+        hostname: "assets.orangechildrenhospital.com",
+      },
     ],
   },
 };

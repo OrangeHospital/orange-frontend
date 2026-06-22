@@ -1,31 +1,6 @@
 import Image from "next/image";
 import { Button } from "../button";
-import { cn } from "@/lib/utils";
-
-const isValidImageUrl = (url?: string) => {
-  if (!url) return false;
-  return (
-    url.startsWith("/") ||
-    url.startsWith("http://") ||
-    url.startsWith("https://") ||
-    !url.includes(":")
-  );
-};
-
-const getImageUrl = (url?: string) => {
-  if (!url) return "";
-  if (
-    url.startsWith("/") ||
-    url.startsWith("http://") ||
-    url.startsWith("https://")
-  ) {
-    return url;
-  }
-  const fileBase =
-    process.env.NEXT_PUBLIC_FILE_BASE_URL || "http://3.111.240.196:7071/share/";
-  const base = fileBase.endsWith("/") ? fileBase : `${fileBase}/`;
-  return `${base}${url}`;
-};
+import { cn, getImageUrl, isValidImageUrl } from "@/lib/utils";
 
 interface ExtendedCTA {
   label: string;

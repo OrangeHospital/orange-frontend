@@ -218,3 +218,25 @@ interface Social {
   createdAt: string;
   updatedAt: string;
 }
+
+interface LogoGridSectionData {
+  title?: string;
+  subtitle?: string;
+  badge?: string;
+  layout?: string;
+  description1?: string;
+  description2?: string;
+  ctaLabel?: string;
+  ctaLink?: string;
+  items?: Array<{
+    logo?: {
+      fileUrl: string;
+      altText?: string;
+      caption?: string;
+      title?: string;
+    };
+    title: string;
+    subtitle?: string;
+    logoType?: string;
+  }>;
+}

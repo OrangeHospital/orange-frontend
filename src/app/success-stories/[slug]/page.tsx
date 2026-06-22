@@ -10,22 +10,7 @@ import type { Metadata } from "next";
 import React from "react";
 import RichTextContent from "@/components/sections/RichTextContent";
 import Image from "next/image";
-import { getSettingValue } from "@/lib/utils";
-
-const getImageUrl = (url?: string) => {
-  if (!url) return "";
-  if (
-    url.startsWith("/") ||
-    url.startsWith("http://") ||
-    url.startsWith("https://")
-  ) {
-    return url;
-  }
-  const fileBase =
-    process.env.NEXT_PUBLIC_FILE_BASE_URL || "http://3.111.240.196:7071/share/";
-  const base = fileBase.endsWith("/") ? fileBase : `${fileBase}/`;
-  return `${base}${url}`;
-};
+import { getSettingValue, getImageUrl } from "@/lib/utils";
 
 interface SuccessStoryProps {
   params: Promise<{ slug: string }>;
