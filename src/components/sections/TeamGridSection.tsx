@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getImageUrl, isValidImageUrl } from "@/lib/utils";
 
 interface TeamGridSectionProps {
-  data: PageSection["content"];
+  data: PageSection["sectionData"];
 }
 
 export default function TeamGridSection({ data }: TeamGridSectionProps) {

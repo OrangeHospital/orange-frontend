@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   images: {
     remotePatterns: [
+      // Sanity CDN
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
+      },
+      // Legacy API servers — kept during transition
       {
         protocol: "http",
         hostname: "13.203.125.10",

@@ -75,7 +75,7 @@ const LinkedinIcon = () => (
   </svg>
 );
 
-import { fetchFormFields, formSubmit, fetchSocial } from "@/lib/api";
+import { fetchFormFields, formSubmit } from "@/lib/api";
 
 interface InquiryFormSectionProps {
   data: InquiryFormSectionData;
@@ -105,7 +105,6 @@ export default function InquiryFormSection({
   const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
   const [formFields, setFormFields] = useState<FormField[]>([]);
-  const [socials, setSocials] = useState<Social[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [modal, setModal] = useState<{
@@ -118,20 +117,18 @@ export default function InquiryFormSection({
     type: "success",
   });
 
-  useEffect(() => {
-    async function loadSocials() {
-      try {
-        const fetchedSocials = await fetchSocial();
-        setSocials(fetchedSocials || []);
-      } catch {
-        setSocials([]);
-      }
-    }
-    loadSocials();
-  }, []);
-
+  // Social links come from settings prop as `social_<platform>` keys
+  // (populated by mapSiteSettingsToSettings in api.ts via Sanity siteSettings)
   const getSocials = (key: string): string | undefined =>
-    socials.find((item) => item.socialKey === key)?.socialValue;
+    settings?.find((s) => s.key === `social_${key}`)?.value;
+
+  const hasSocials = [
+    "facebook",
+    "instagram",
+    "youtube",
+    "twitter",
+    "linkedin",
+  ].some((k) => getSocials(k));
 
   useEffect(() => {
     async function loadFields() {
@@ -512,7 +509,7 @@ export default function InquiryFormSection({
             </div>
 
             {/* Divider & Social Links */}
-            {socials.length > 0 && socials.some((item) => item.socialValue) && (
+            {hasSocials && (
               <>
                 <div className="h-px w-full bg-slate-200" />
                 <div>

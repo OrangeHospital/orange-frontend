@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 interface CTASectionProps {
-  data: PageSection["content"];
+  data: PageSection["sectionData"];
 }
 
 export default function CTASection({ data }: CTASectionProps) {

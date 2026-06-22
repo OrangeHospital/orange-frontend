@@ -10,7 +10,7 @@ interface ExtendedCTA {
 }
 
 interface ContentWithImageSectionProps {
-  data: PageSection["content"];
+  data: PageSection["sectionData"];
   lang?: string;
 }
 

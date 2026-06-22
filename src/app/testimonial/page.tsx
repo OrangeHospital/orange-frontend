@@ -2,9 +2,9 @@ import { fetchTestimonials } from "@/lib/api";
 import TestimonialClient from "./TestimonialClient";
 import type { Metadata } from "next";
 
-export const dynamic = "force-dynamic";
+// ISR: regenerate at most once per hour
+export const revalidate = 3600;
 
-// Generate metadata for SEO
 export const metadata: Metadata = {
   title: "Patient Reviews & Testimonials - Orange Children Hospital",
   description:
@@ -18,8 +18,14 @@ export const metadata: Metadata = {
       "Read real stories, parenting feedback, and video reviews of Level 3 NICU, PICU, and critical care from families.",
     url: "https://orangechildrenhospital.com/testimonial",
     siteName: "Orange Hospital",
-    locale: "en",
+    locale: "en_IN",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Patient Reviews & Testimonials - Orange Children Hospital",
+    description:
+      "Read real stories, parenting feedback, and video reviews of Level 3 NICU, PICU, and critical care from families.",
   },
 };
 
@@ -28,7 +34,7 @@ export default async function TestimonialPage() {
 
   try {
     const response = await fetchTestimonials();
-    if (response && response.success && Array.isArray(response.data)) {
+    if (response?.success && Array.isArray(response.data)) {
       testimonials = response.data.filter((t) => t.status === 1);
     }
   } catch (error) {

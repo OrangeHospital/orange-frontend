@@ -3,9 +3,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Calendar, ArrowRight } from "lucide-react";
-import { getImageUrl } from "@/lib/utils";
-
-export const dynamic = "force-dynamic";
+// ISR: regenerate at most once per hour
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Pediatric & Neonatal Success Stories - Orange Children Hospital",
@@ -20,8 +19,14 @@ export const metadata: Metadata = {
       "Read inspiring stories of critical neonatal and pediatric survival under our Level 3 NICU and PICU team.",
     url: "https://orangechildrenhospital.com/success-stories",
     siteName: "Orange Hospital",
-    locale: "en",
+    locale: "en_IN",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pediatric & Neonatal Success Stories - Orange Children Hospital",
+    description:
+      "Read inspiring stories of critical neonatal and pediatric survival under our Level 3 NICU and PICU team.",
   },
 };
 
@@ -31,8 +36,7 @@ export default async function SuccessStoriesPage() {
 
   try {
     const response = await fetchSuccessStories();
-
-    if (response && response.success && Array.isArray(response.data)) {
+    if (response?.success && Array.isArray(response.data)) {
       stories = response.data.filter((s) => s.status === 1);
     }
   } catch {
@@ -41,9 +45,8 @@ export default async function SuccessStoriesPage() {
 
   return (
     <main className="min-h-screen bg-[#F7FAFC]">
-      {/* Dynamic Visual Banner Section */}
+      {/* Banner */}
       <section className="bg-slate-950 text-white py-16 px-6 sm:px-8 relative overflow-hidden">
-        {/* Background Image with Dark Premium Vignette */}
         <div className="absolute inset-0 z-0 opacity-75">
           <Image
             src="/nicu_expertise.png"
@@ -54,11 +57,8 @@ export default async function SuccessStoriesPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/40 to-slate-950/80" />
         </div>
-
-        {/* Subtle decorative elements */}
         <div className="absolute right-0 top-0 w-96 h-96 bg-[#F7A707]/10 rounded-full blur-3xl pointer-events-none z-10" />
         <div className="absolute left-10 bottom-0 w-72 h-72 bg-[#2B6CB0]/15 rounded-full blur-3xl pointer-events-none z-10" />
-
         <div className="max-w-7xl mx-auto flex flex-col items-center text-center relative z-10">
           <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-[#F7A707] font-semibold mb-3">
             <span>Orange Children Hospital</span>
@@ -72,17 +72,14 @@ export default async function SuccessStoriesPage() {
             It requires more than just knowledge or medical practice when it
             comes to child health care. Our team of expert doctors approaches
             every child and their health problems with the utmost care, starting
-            from the child’s treatment to easing the medical environment so that
-            our little patients don’t get nervous and enjoy every moment of
-            their journey with us. Orange hospital is where years of medical
-            experience meet with compassion for children. Our doctors’ bond with
-            their patients is not only limited to the treatment; they establish
-            a bond of companionship with them, and here is where we stand out.
+            from the child&apos;s treatment to easing the medical environment so
+            that our little patients don&apos;t get nervous and enjoy every
+            moment of their journey with us.
           </p>
         </div>
       </section>
 
-      {/* Main Grid Content */}
+      {/* Story Grid */}
       <section className="py-16 px-6 sm:px-8 lg:px-16 max-w-7xl mx-auto">
         {errorMsg ? (
           <div className="text-center py-20 bg-white rounded-3xl border border-slate-100 shadow-sm max-w-md mx-auto">
@@ -99,8 +96,7 @@ export default async function SuccessStoriesPage() {
             {stories.map((s) => {
               const formatDate = (dateString?: string) => {
                 if (!dateString) return "";
-                const date = new Date(dateString);
-                return date.toLocaleDateString("en-US", {
+                return new Date(dateString).toLocaleDateString("en-US", {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -112,11 +108,10 @@ export default async function SuccessStoriesPage() {
                   key={s.id}
                   className="bg-white flex flex-col rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-2 border border-slate-100 transition-all duration-300 group"
                 >
-                  {/* Card Image area - blank if no image */}
                   <div className="relative aspect-[4/3] w-full bg-slate-100 overflow-hidden flex items-center justify-center">
                     {s.media?.fileUrl ? (
                       <Image
-                        src={getImageUrl(s.media.fileUrl)}
+                        src={s.media.fileUrl}
                         alt={s.media.altText || s.name}
                         className="w-full h-full object-cover top-0 group-hover:scale-105 transition-transform duration-500"
                         width={1920}
@@ -126,22 +121,17 @@ export default async function SuccessStoriesPage() {
                       <div className="w-full h-full bg-slate-100" />
                     )}
                   </div>
-
-                  {/* Card Info Section */}
                   <div className="p-6 flex flex-col flex-grow text-left">
                     <div className="flex items-center gap-1.5 text-xs text-slate-400 mb-3 font-medium">
                       <Calendar className="h-3.5 w-3.5 text-[#F7A707]" />
                       <span>{formatDate(s.createdAt)}</span>
                     </div>
-
                     <h3 className="text-base md:text-lg font-bold text-slate-800 group-hover:text-[#F7A707] transition-colors duration-200 mb-2.5 line-clamp-2 min-h-[3rem] leading-snug">
                       <Link href={`/success-stories/${s.slug}`}>{s.name}</Link>
                     </h3>
-
                     <p className="text-slate-500 text-sm leading-relaxed mb-5 line-clamp-3 flex-grow">
                       {s.sortDescription || ""}
                     </p>
-
                     <div className="mt-auto pt-4 border-t border-slate-50">
                       <Link
                         href={`/success-stories/${s.slug}`}

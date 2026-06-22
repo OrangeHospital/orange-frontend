@@ -6,7 +6,7 @@ import Link from "next/link";
 import { fetchSocial } from "@/lib/api";
 
 interface HeroSectionProps {
-  data: PageSection["content"];
+  data: PageSection["sectionData"];
   lang?: string;
 }
 

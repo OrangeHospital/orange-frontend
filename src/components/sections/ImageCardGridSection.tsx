@@ -2,7 +2,7 @@ import Image from "next/image";
 import { getImageUrl } from "@/lib/utils";
 
 interface ImageCardGridSectionProps {
-  data: PageSection["content"];
+  data: PageSection["sectionData"];
 }
 
 export default function ImageCardGridSection({

@@ -1,4 +1,7 @@
-// Global Types for Orange Hospital Page Sections
+// Global ambient type declarations for Orange Hospital.
+// NOTE: This file must stay free of import/export statements so TypeScript
+// treats it as a global (non-module) declaration file.
+
 interface MediaAsset {
   id: string;
   fileUrl: string;
@@ -17,7 +20,7 @@ interface PageSection {
   id: string;
   sectionType: string;
   sortOrder: number;
-  content: {
+  sectionData: {
     title?: string;
     subtitle?: string;
     description?: string;
@@ -80,6 +83,7 @@ interface MenusResponse {
   message: string;
   data: Menu[];
 }
+
 interface Menu {
   id: string;
   menuName: string;
@@ -219,26 +223,4 @@ interface Social {
   status: string;
   createdAt: string;
   updatedAt: string;
-}
-
-interface LogoGridSectionData {
-  title?: string;
-  subtitle?: string;
-  badge?: string;
-  layout?: string;
-  description1?: string;
-  description2?: string;
-  ctaLabel?: string;
-  ctaLink?: string;
-  items?: Array<{
-    logo?: {
-      fileUrl: string;
-      altText?: string;
-      caption?: string;
-      title?: string;
-    };
-    title: string;
-    subtitle?: string;
-    logoType?: string;
-  }>;
 }

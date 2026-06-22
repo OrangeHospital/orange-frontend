@@ -8,7 +8,7 @@ import type { LucideIcon } from "lucide-react";
 type LucideIconName = keyof typeof LucideIcons.icons;
 
 interface IconCardGridSectionProps {
-  data: PageSection["content"];
+  data: PageSection["sectionData"];
 }
 
 export default function IconCardGridSection({

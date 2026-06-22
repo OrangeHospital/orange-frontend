@@ -3,17 +3,17 @@ import SectionRenderer from "@/components/SectionRenderer";
 import type { Metadata } from "next";
 import { getSettingValue } from "@/lib/utils";
 
-// export const dynamic = "force-dynamic";
+// ISR: regenerate at most once per hour
+export const revalidate = 3600;
 
-// Generate metadata for SEO
 export async function generateMetadata(): Promise<Metadata> {
-  const canonical = `https://orangechildrenhospital.com/`;
+  const canonical = "https://orangechildrenhospital.com/";
   const settings = await fetchSettings().catch(() => []);
 
   try {
     const pageData = await fetchPageSections("Home");
 
-    const title = pageData?.metaTitle || "Orange Hospital";
+    const title = pageData?.metaTitle || "Orange Children Hospital";
     const description =
       pageData?.metaDescription ||
       getSettingValue(
@@ -25,15 +25,13 @@ export async function generateMetadata(): Promise<Metadata> {
     return {
       title,
       description,
-      alternates: {
-        canonical,
-      },
+      alternates: { canonical },
       openGraph: {
         title,
         description,
         url: canonical,
         siteName: "Orange Hospital",
-        locale: "en",
+        locale: "en_IN",
         type: "website",
       },
       twitter: {
@@ -52,10 +50,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function Home() {
   let pageData;
-  let settings: Array<{ key: string; value: string }> = [];
+  let settings: Setting[] = [];
 
   try {
     pageData = await fetchPageSections("Home");
+
     settings = await fetchSettings();
   } catch {
     return (
@@ -65,14 +64,13 @@ export default async function Home() {
             Unable to load page
           </h1>
           <p className="text-gray-600">
-            Please check your configuration or API endpoints and try again.
+            Please check your Sanity configuration and try again.
           </p>
         </div>
       </main>
     );
   }
 
-  // Sort sections by sortOrder
   const sortedSections = pageData.sections.sort(
     (a, b) => a.sortOrder - b.sortOrder,
   );

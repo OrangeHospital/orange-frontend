@@ -1,11 +1,11 @@
-"use client";
+// Server Component — fetches social links and settings directly from Sanity.
+// No "use client" directive; no useState/useEffect.
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState, useEffect } from "react";
 import { fetchSocial, fetchSettings } from "@/lib/api";
 
-// Inline SVGs for social media icons
+// Inline SVG social media icons
 const FacebookIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -69,36 +69,34 @@ const LinkedinIcon = () => (
   </svg>
 );
 
-export default function Footer() {
-  const [socials, setSocials] = useState<Social[]>([]);
-  const [settings, setSettings] = useState<Setting[]>([]);
+const quickLinks = [
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about" },
+  { label: "Our Doctors", href: "/doctors" },
+  { label: "Our Facilities", href: "/facilities" },
+  { label: "Contact Us", href: "/contact" },
+];
 
-  useEffect(() => {
-    async function loadSocials() {
-      try {
-        const fetchedSocials = await fetchSocial();
-        setSocials(fetchedSocials || []);
-      } catch {
-        setSocials([]);
-      }
-    }
-    async function loadSettings() {
-      try {
-        const fetchedSettings = await fetchSettings();
-        setSettings(fetchedSettings || []);
-      } catch {
-        setSettings([]);
-      }
-    }
-    loadSocials();
-    loadSettings();
-  }, []);
+const facilities = [
+  { label: "40 Bedded NICU and PICU" },
+  { label: "High-tech Operation Theater" },
+  { label: "24 HRS Ambulance Services" },
+  { label: "24X7 Neonatologist & Intensivist" },
+  { label: "Isolated Pediatric Dialysis Unit" },
+];
 
-  const getSocials = (key: string): string | undefined =>
-    socials.find((item) => item.socialKey === key)?.socialValue;
+export default async function Footer() {
+  // Fetch from Sanity on the server — no client-side waterfall
+  const [socials, settings] = await Promise.all([
+    fetchSocial().catch(() => [] as Social[]),
+    fetchSettings().catch(() => [] as Setting[]),
+  ]);
 
-  const getSetting = (key: string): string =>
-    settings.find((item) => item.key === key)?.value || "";
+  const getSocial = (key: string) =>
+    socials.find((s) => s.socialKey === key)?.socialValue;
+
+  const getSetting = (key: string) =>
+    settings.find((s) => s.key === key)?.value || "";
 
   const companyPhone = getSetting("hospital_phone") || "+91 97243 05900";
   const companyEmail =
@@ -107,21 +105,7 @@ export default function Footer() {
     getSetting("hospital_address") ||
     "Opp. Satyamev Royal, Near Tapovan Circle, Chandkheda, Ahmedabad, Gujarat 382424";
 
-  const quickLinks = [
-    { label: "Home", href: "/" },
-    { label: "About Us", href: "/about" },
-    { label: "Our Doctors", href: "/doctors" },
-    { label: "Our Facilities", href: "/facilities" },
-    { label: "Contact Us", href: "/contact" },
-  ];
-
-  const facilities = [
-    { label: "40 Bedded NICU and PICU" },
-    { label: "High-tech Operation Theater" },
-    { label: "24 HRS Ambulance Services" },
-    { label: "24X7 Neonatologist & Intensivist" },
-    { label: "Isolated Pediatric Dialysis Unit" },
-  ];
+  const hasSocials = socials.length > 0 && socials.some((s) => s.socialValue);
 
   return (
     <footer className="bg-slate-900 text-gray-300 pt-16 pb-8 border-t border-slate-800">
@@ -143,15 +127,14 @@ export default function Footer() {
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed">
               Orange Children Hospital is Gujarat&apos;s one of the largest 50
-              bedded pediatric hospital. We specialize in Neonatal & Pediatric
-              Critical Care with Level 3 NICU and PICU.
+              bedded pediatric hospital. We specialize in Neonatal &amp;
+              Pediatric Critical Care with Level 3 NICU and PICU.
             </p>
-            {/* Dynamic Social Icons */}
-            {socials.length > 0 && socials.some((item) => item.socialValue) && (
+            {hasSocials && (
               <div className="flex items-center gap-3 mt-2">
-                {getSocials("facebook") && (
+                {getSocial("facebook") && (
                   <a
-                    href={getSocials("facebook")}
+                    href={getSocial("facebook")}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Facebook"
@@ -160,9 +143,9 @@ export default function Footer() {
                     <FacebookIcon />
                   </a>
                 )}
-                {getSocials("instagram") && (
+                {getSocial("instagram") && (
                   <a
-                    href={getSocials("instagram")}
+                    href={getSocial("instagram")}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Instagram"
@@ -171,9 +154,9 @@ export default function Footer() {
                     <InstagramIcon />
                   </a>
                 )}
-                {getSocials("youtube") && (
+                {getSocial("youtube") && (
                   <a
-                    href={getSocials("youtube")}
+                    href={getSocial("youtube")}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="YouTube"
@@ -182,20 +165,20 @@ export default function Footer() {
                     <YoutubeIcon />
                   </a>
                 )}
-                {getSocials("twitter") && (
+                {getSocial("twitter") && (
                   <a
-                    href={getSocials("twitter")}
+                    href={getSocial("twitter")}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="Twitter"
+                    aria-label="Twitter / X"
                     className="flex h-8 w-8 items-center justify-center rounded-md border border-slate-800 bg-slate-900 text-gray-400 transition-colors hover:border-[#F7A707] hover:bg-[#F7A707]/10 hover:text-white"
                   >
                     <TwitterIcon />
                   </a>
                 )}
-                {getSocials("linkedin") && (
+                {getSocial("linkedin") && (
                   <a
-                    href={getSocials("linkedin")}
+                    href={getSocial("linkedin")}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="LinkedIn"
@@ -259,11 +242,10 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Divider */}
         <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-gray-500">
-            © {new Date().getFullYear()} Orange Children Hospital. All Rights
-            Reserved.
+            &copy; {new Date().getFullYear()} Orange Children Hospital. All
+            Rights Reserved.
           </p>
         </div>
       </div>
