@@ -1,5 +1,7 @@
 import Link from "next/link";
 import React from "react";
+import { PortableText } from "@portabletext/react";
+import { portableTextComponents } from "../../lib/portableTextComponents";
 
 const IS_BOLD = 1;
 const IS_ITALIC = 2;
@@ -97,7 +99,24 @@ export default function ParagraphEditorSection({ data }) {
         rawContent = data.content;
       }
     }
+  } catch {
+    // Ignore
+  }
 
+  if (Array.isArray(rawContent)) {
+    return (
+      <div className="container mx-auto px-6 max-w-6xl py-4">
+        <div className="text-[#4a5565] text-lg leading-relaxed prose prose-blue max-w-none">
+          <PortableText
+            value={rawContent}
+            components={portableTextComponents}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  try {
     if (typeof rawContent === "string") {
       lexicalState = JSON.parse(rawContent);
     } else if (rawContent && typeof rawContent === "object") {
@@ -110,7 +129,7 @@ export default function ParagraphEditorSection({ data }) {
   // If we have a valid lexical state with a root, use the renderer
   if (lexicalState && lexicalState.root) {
     return (
-      <div className="container mx-auto px-5 md:px-10 max-w-5xl py-4">
+      <div className="container mx-auto px-6 max-w-3xl py-4">
         <LexicalRenderer node={lexicalState.root} />
       </div>
     );
@@ -119,7 +138,7 @@ export default function ParagraphEditorSection({ data }) {
   // Fallback to HTML rendering for raw strings/HTML
   if (typeof rawContent === "string" && rawContent.trim() !== "") {
     return (
-      <div className="container mx-auto px-5 md:px-10 max-w-7xl py-4">
+      <div className="container mx-auto px-6 max-w-3xl py-4">
         <div
           className="text-[#4a5565] text-lg leading-relaxed prose prose-blue max-w-none"
           dangerouslySetInnerHTML={{ __html: rawContent }}

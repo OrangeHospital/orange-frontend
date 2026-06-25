@@ -84,6 +84,14 @@ export default async function UnifiedPage({ params }: UnifiedPageProps) {
 
   return (
     <main className="min-h-screen">
+      {pageData?.schemaMarkup && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: pageData.schemaMarkup.replace(/<\/?script[^>]*>/gi, ""),
+          }}
+        />
+      )}
       <SectionRenderer
         sections={sortedSections}
         settings={settings}

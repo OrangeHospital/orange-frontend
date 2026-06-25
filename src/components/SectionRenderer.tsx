@@ -34,14 +34,16 @@ export default function SectionRenderer({
   return (
     <>
       {sections.map((mapping, index) => {
-        // const { section } = mapping;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const section = (mapping as any).section || mapping;
+
         const key = `${section.sectionType}-${index}`;
 
         switch (section.sectionType) {
           case "hero":
-            return <HeroSection key={key} data={section.sectionData} />;
+            return section.sectionData ? (
+              <HeroSection key={key} data={section.sectionData} />
+            ) : null;
 
           case "stats_content":
             return section.sectionData ? (
@@ -72,7 +74,7 @@ export default function SectionRenderer({
               <TeamGridSection key={key} data={section.sectionData} />
             ) : null;
 
-          case "cta":
+          case "cta_section":
             return section.sectionData ? (
               <CTASection key={key} data={section.sectionData} />
             ) : null;

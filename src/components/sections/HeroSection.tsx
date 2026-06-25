@@ -35,15 +35,15 @@ export default function HeroSection({ data }: HeroSectionProps) {
     {
       titlePrefix: "Ensure the good health of your little angels with",
       titleHighlight: "ORANGE HOSPITAL",
-      subtitle: data.subtitle || "Neonatal & Pediatric Intensive Care Unit",
+      subtitle: data?.subtitle || "Neonatal & Pediatric Intensive Care Unit",
       image: "/hero_baby.png",
-      primaryCta: data.primaryCta || {
-        label: "Book Appointment",
-        href: "/contact",
+      primaryCta: {
+        label: data?.primaryCta?.label || "Book Appointment",
+        href: data?.primaryCta?.href || "/contact",
       },
-      secondaryCta: data.secondaryCta || {
-        label: "Our Facilities",
-        href: "/facilities",
+      secondaryCta: {
+        label: data?.secondaryCta?.label || "Our Facilities",
+        href: data?.secondaryCta?.href || "/facilities",
       },
     },
     {
@@ -52,13 +52,13 @@ export default function HeroSection({ data }: HeroSectionProps) {
       subtitle:
         "Gujarat's premier 50-bedded critical care facility for infants & children",
       image: "/nicu_expertise.png",
-      primaryCta: data.primaryCta || {
-        label: "Book Appointment",
-        href: "/contact",
+      primaryCta: {
+        label: data?.primaryCta?.label || "Book Appointment",
+        href: data?.primaryCta?.href || "/contact",
       },
-      secondaryCta: data.secondaryCta || {
-        label: "Our Facilities",
-        href: "/facilities",
+      secondaryCta: {
+        label: data?.secondaryCta?.label || "Our Facilities",
+        href: data?.secondaryCta?.href || "/facilities",
       },
     },
     {
@@ -67,13 +67,13 @@ export default function HeroSection({ data }: HeroSectionProps) {
       subtitle:
         "First-of-its-kind isolated pediatric dialysis unit and cooling devices",
       image: "/icu_infrastructure.png",
-      primaryCta: data.primaryCta || {
-        label: "Book Appointment",
-        href: "/contact",
+      primaryCta: {
+        label: data?.primaryCta?.label || "Book Appointment",
+        href: data?.primaryCta?.href || "/contact",
       },
-      secondaryCta: data.secondaryCta || {
-        label: "Our Facilities",
-        href: "/facilities",
+      secondaryCta: {
+        label: data?.secondaryCta?.label || "Our Facilities",
+        href: data?.secondaryCta?.href || "/facilities",
       },
     },
   ];
@@ -137,7 +137,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
 
                   {/* Call to Actions */}
                   <div className="mt-10 flex flex-wrap gap-4 items-center">
-                    {slide.primaryCta && (
+                    {slide.primaryCta?.href && (
                       <Link
                         href={slide.primaryCta.href}
                         className="inline-block bg-[#F7A707] hover:bg-[#e69e06] text-white px-7 py-3.5 rounded-lg text-sm sm:text-base font-bold shadow-lg shadow-[#F7A707]/20 transition-all duration-300 transform hover:-translate-y-0.5"
@@ -145,7 +145,7 @@ export default function HeroSection({ data }: HeroSectionProps) {
                         {slide.primaryCta.label}
                       </Link>
                     )}
-                    {slide.secondaryCta && (
+                    {slide.secondaryCta?.href && (
                       <Link
                         href={slide.secondaryCta.href}
                         className="inline-block bg-white/10 hover:bg-white/15 text-white border border-white/20 px-7 py-3.5 rounded-lg text-sm sm:text-base font-bold backdrop-blur-sm transition-all duration-300 transform hover:-translate-y-0.5"

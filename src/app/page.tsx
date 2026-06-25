@@ -53,7 +53,7 @@ export default async function Home() {
   let settings: Setting[] = [];
 
   try {
-    pageData = await fetchPageSections("Home");
+    pageData = await fetchPageSections("home");
 
     settings = await fetchSettings();
   } catch {
@@ -77,6 +77,14 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen">
+      {pageData?.schemaMarkup && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: pageData.schemaMarkup.replace(/<\/?script[^>]*>/gi, ""),
+          }}
+        />
+      )}
       <SectionRenderer
         sections={sortedSections}
         settings={settings}

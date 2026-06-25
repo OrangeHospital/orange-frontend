@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Script from "next/script";
+import { useState } from "react";
 import {
   Mail,
   Phone,
@@ -74,9 +73,6 @@ const LinkedinIcon = () => (
     <circle cx="4" cy="4" r="2" />
   </svg>
 );
-
-import { fetchFormFields, formSubmit } from "@/lib/api";
-
 interface InquiryFormSectionProps {
   data: InquiryFormSectionData;
   settings?: Array<{ key: string; value: string }>;
@@ -86,25 +82,11 @@ interface InquiryFormSectionProps {
   };
 }
 
-declare global {
-  interface Window {
-    grecaptcha: {
-      execute: (
-        siteKey: string,
-        options: { action: string },
-      ) => Promise<string>;
-    };
-  }
-}
-
 export default function InquiryFormSection({
   data,
   settings,
   productData,
 }: InquiryFormSectionProps) {
-  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-
-  const [formFields, setFormFields] = useState<FormField[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [modal, setModal] = useState<{
@@ -130,25 +112,9 @@ export default function InquiryFormSection({
     "linkedin",
   ].some((k) => getSocials(k));
 
-  useEffect(() => {
-    async function loadFields() {
-      if (!data.formId) return;
-
-      try {
-        const fetchedFields = await fetchFormFields(data.formId);
-
-        const sortedFields = [...fetchedFields].sort(
-          (a, b) => a.order - b.order,
-        );
-
-        setFormFields(sortedFields);
-      } catch {
-        setFormFields([]);
-      }
-    }
-
-    loadFields();
-  }, [data.formId]);
+  const formFields = data.form?.fields
+    ? [...data.form.fields].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    : [];
 
   const getSetting = (key: string) => {
     return settings?.find((s) => s.key === key)?.value || "";
@@ -162,53 +128,41 @@ export default function InquiryFormSection({
     e.preventDefault();
 
     const formElement = e.currentTarget;
-
-    if (!siteKey) {
-      setModal({
-        show: true,
-        message: "Security verification failed.",
-        type: "error",
-      });
-
-      return;
-    }
-
-    if (!window.grecaptcha) {
-      setModal({
-        show: true,
-        message: "Security check is loading. Please wait a moment.",
-        type: "error",
-      });
-
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
-      const recaptchaToken = await window.grecaptcha.execute(siteKey, {
-        action: "submit_inquiry",
-      });
-
       const formData = new FormData(formElement);
-
       const formValues: Record<string, string | File> = {};
 
       formData.forEach((value, key) => {
-        formValues[key] = value as string | File;
+        const field = formFields.find((f) => f.name === key);
+        const displayLabel = field?.label || key;
+        formValues[displayLabel] = value as string | File;
       });
 
       if (productData) {
-        formValues["Product_Name"] = productData.name;
-        formValues["Product_Segment"] = productData.segmentName;
-        formValues["Form_Title"] = "New Product Inquiry";
+        formValues["Product Name"] = productData.name;
+        formValues["Product Segment"] = productData.segmentName;
+        formValues["Form Title"] = "New Product Inquiry";
       }
 
-      await formSubmit({
-        formId: data.formId,
-        formValues,
-        recaptchaToken,
+      // Direct call to local Next.js API route to send email using Nodemailer
+      const emailRes = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          toEmail: data.form?.notificationEmail || "",
+          formName: data.form?.name || "Inquiry Form",
+          formValues,
+        }),
       });
+
+      if (!emailRes.ok) {
+        const errData = await emailRes.json();
+        throw new Error(errData.message || "Failed to send email");
+      }
 
       formElement.reset();
 
@@ -218,10 +172,14 @@ export default function InquiryFormSection({
           "Your enquiry has been submitted successfully. Our team will contact you shortly.",
         type: "success",
       });
-    } catch {
+    } catch (error: unknown) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : "Failed to submit enquiry. Please try again later.";
       setModal({
         show: true,
-        message: "Failed to submit enquiry. Please try again later.",
+        message: errorMessage,
         type: "error",
       });
     } finally {
@@ -603,13 +561,6 @@ export default function InquiryFormSection({
                     </div>
                   </div>
                 </div>
-              )}
-
-              {siteKey && (
-                <Script
-                  src={`https://www.google.com/recaptcha/api.js?render=${siteKey}`}
-                  strategy="lazyOnload"
-                />
               )}
 
               {formFields.length === 0 ? (

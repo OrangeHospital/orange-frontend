@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Content API layer.
@@ -13,6 +14,9 @@
 import { sanityClient } from "@/lib/sanity";
 import {
   SITE_SETTINGS_QUERY,
+  ALL_SITE_DETAILS_QUERY,
+  SITE_DETAIL_BY_KEY_QUERY,
+  ALL_SOCIALS_QUERY,
   PAGE_BY_SLUG_QUERY,
   PAGE_BY_TYPE_QUERY,
   ALL_SUCCESS_STORIES_QUERY,
@@ -27,7 +31,7 @@ import {
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-const REVALIDATE_SECONDS = 3600; // 1 hour ISR
+const REVALIDATE_SECONDS = process.env.NODE_ENV === "development" ? 0 : 3600;
 
 function sanityFetch<T = any>(
   query: string,
@@ -95,42 +99,73 @@ function mapSiteSettingsToSettings(raw: any): Setting[] {
   return settings.filter((s) => s.value !== "");
 }
 
-// Map a raw Sanity siteSettings → Social[]
-function mapSiteSettingsToSocials(raw: any): Social[] {
-  if (!raw || !Array.isArray(raw.socialLinks)) return [];
-  return raw.socialLinks
-    .filter((l: any) => l.platform && l.url)
-    .map((l: any, idx: number) => ({
-      id: `social_${idx}_${l.platform}`,
-      socialKey: l.platform,
-      socialValue: l.url,
-      status: String(l.status ?? 1),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }));
-}
-
-// Map raw Sanity page data → PageResponse
 function mapPageData(raw: any): PageResponse | null {
   if (!raw) return null;
+
+  const camelToSnake = (str: string): string => {
+    if (!str) return "";
+    return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+  };
+
   return {
     slug: raw.slug || "",
     title: raw.title || "",
     metaTitle: raw.metaTitle,
     metaDescription: raw.metaDescription,
     pageType: raw.pageType || "",
+    schemaMarkup: raw.schemaMarkup,
+
     sections: Array.isArray(raw.sections)
-      ? raw.sections.map((s: any) => ({
-          id: s.id || s._key || "",
-          sectionType: s.sectionType || "",
-          sortOrder: s.sortOrder ?? 0,
-          // SectionRenderer reads section.sectionData — keep the key name
-          sectionData: s.sectionData || {},
-        }))
+      ? raw.sections
+          .filter((section: any) => {
+            if (!section) return false;
+            const sectionData = section.sectionData || section;
+            return (
+              sectionData.hideSection !== true && section.hideSection !== true
+            );
+          })
+          .map((section: any, index: number) => {
+            const isProjected = section && "sectionData" in section;
+
+            let id = "";
+            let rawType = "";
+            let sortOrder = index + 1;
+            let sectionData = {};
+
+            if (isProjected) {
+              id = section.id || section._key || "";
+              rawType = section.sectionType || section._type || "";
+              sortOrder = section.sortOrder ?? index + 1;
+              sectionData = section.sectionData || {};
+            } else {
+              id = section._key || "";
+              rawType = section._type || "";
+              sortOrder = index + 1;
+              sectionData = { ...section };
+            }
+
+            // Clean null and undefined values from sectionData
+            let cleanSectionData = {};
+            if (sectionData && typeof sectionData === "object") {
+              cleanSectionData = Object.fromEntries(
+                Object.entries(sectionData).filter(
+                  ([_, v]) => v !== null && v !== undefined,
+                ),
+              );
+            }
+
+            const sectionType = camelToSnake(rawType);
+
+            return {
+              id,
+              sectionType,
+              sortOrder,
+              sectionData: cleanSectionData,
+            };
+          })
       : [],
   };
 }
-
 // Map raw Sanity success story → SuccessStory
 function mapSuccessStory(raw: any): SuccessStory {
   return {
@@ -195,14 +230,70 @@ export async function fetchPageSections(
   return page;
 }
 
+// Map raw Sanity siteDetail → SiteDetail
+function mapSiteDetail(raw: any): SiteDetail {
+  return {
+    id: raw._id || "",
+    key: raw.key || "",
+    value: raw.value || "",
+    published: raw.published ?? false,
+  };
+}
+
+/**
+ * Fetch all published site details.
+ */
+export async function fetchSiteDetails(): Promise<SiteDetail[]> {
+  const raw: any[] = await sanityFetch(ALL_SITE_DETAILS_QUERY);
+  return Array.isArray(raw) ? raw.map(mapSiteDetail) : [];
+}
+
+/**
+ * Fetch a single published site detail matching the specified key.
+ */
+export async function fetchSiteDetailByKey(
+  key: string,
+): Promise<SiteDetail | null> {
+  const raw = await sanityFetch(SITE_DETAIL_BY_KEY_QUERY, { key });
+  return raw ? mapSiteDetail(raw) : null;
+}
+
 /**
  * Fetch global site settings and social links.
  * Returns a flat key/value array compatible with getSettingValue().
  * Social links are included as settings with keys like "social_facebook".
  */
 export async function fetchSettings(): Promise<Setting[]> {
-  const raw = await sanityFetch(SITE_SETTINGS_QUERY);
-  return mapSiteSettingsToSettings(raw);
+  const [rawSettings, rawDetails] = await Promise.all([
+    sanityFetch(SITE_SETTINGS_QUERY),
+    sanityFetch(ALL_SITE_DETAILS_QUERY),
+  ]);
+
+  const settingsList = mapSiteSettingsToSettings(rawSettings);
+
+  // Map site details list to Setting format
+  const detailsList: Setting[] = Array.isArray(rawDetails)
+    ? rawDetails.map((d: any) => ({
+        id: d._id || d.key,
+        key: d.key,
+        value: d.value || "",
+      }))
+    : [];
+
+  // Create a map to merge key-values cleanly
+  const mergedMap = new Map<string, Setting>();
+
+  // Add siteSettings first
+  settingsList.forEach((s) => mergedMap.set(s.key, s));
+
+  // Override/add with siteDetail values
+  detailsList.forEach((d) => mergedMap.set(d.key, d));
+
+  const finalSettings = Array.from(mergedMap.values()).filter(
+    (s) => s.value !== "",
+  );
+
+  return finalSettings;
 }
 
 /**
@@ -351,6 +442,7 @@ export async function fetchSuccessStoryBySlug(
   slug: string,
 ): Promise<SuccessStoryResponse> {
   const raw = await sanityFetch(SUCCESS_STORY_BY_SLUG_QUERY, { slug });
+
   if (!raw) {
     return {
       success: false,
@@ -367,12 +459,21 @@ export async function fetchSuccessStoryBySlug(
   };
 }
 
+function mapSanitySocialToSocial(raw: any): Social {
+  return {
+    id: raw._id || "",
+    socialKey: raw.socialKey || "",
+    socialValue: raw.socialValue || "",
+    status: raw.status ? "active" : "inactive",
+  };
+}
+
 /**
- * Fetch all social media links from Sanity siteSettings.
+ * Fetch all social media links from Sanity.
  */
 export async function fetchSocial(): Promise<Social[]> {
-  const raw = await sanityFetch(SITE_SETTINGS_QUERY);
-  return mapSiteSettingsToSocials(raw);
+  const raw = await sanityFetch(ALL_SOCIALS_QUERY);
+  return Array.isArray(raw) ? raw.map(mapSanitySocialToSocial) : [];
 }
 
 /**
@@ -423,48 +524,4 @@ export async function fetchSuccessStoriesSitemap(): Promise<{
         }))
     : [];
   return { successStories };
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Operational APIs — remain as REST (form processing, authentication, etc.)
-// ─────────────────────────────────────────────────────────────────────────────
-
-const OPS_API_BASE = process.env.NEXT_PUBLIC_API_BASE;
-
-/**
- * Fetch dynamic form fields for a given form ID.
- * Calls the operational Express backend — NOT Sanity.
- */
-export async function fetchFormFields(formId: string): Promise<FormField[]> {
-  const response = await fetch(
-    `${OPS_API_BASE}/form/field/get-by-form/${formId}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      cache: "no-store",
-    },
-  );
-  if (!response.ok) {
-    throw new Error(`Failed to fetch form fields: ${response.statusText}`);
-  }
-  const data = await response.json();
-  return data.data || [];
-}
-
-/**
- * Submit a contact/inquiry form.
- * Calls the operational Express backend — NOT Sanity.
- */
-export async function formSubmit(formData: any): Promise<FormField[]> {
-  const response = await fetch(`${OPS_API_BASE}/form/submit`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData),
-    cache: "no-store",
-  });
-  if (!response.ok) {
-    throw new Error(`Failed to submit form: ${response.statusText}`);
-  }
-  const data = await response.json();
-  return data.data || [];
 }

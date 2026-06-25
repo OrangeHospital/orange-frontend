@@ -13,10 +13,15 @@ const imageProjection = `{
 // Each sectionData field is projected explicitly so image references are
 // resolved to plain URLs compatible with the existing MediaAsset type.
 const sectionDataProjection = `{
+  hideSection,
   title,
   subtitle,
   description,
   badge,
+  titlePrefix,
+  titleHighlight,
+  tagline,
+  contentTitle,
   "image": image ${imageProjection},
   imagePosition,
   variant,
@@ -29,6 +34,24 @@ const sectionDataProjection = `{
   mapUrl,
   formId,
   formType,
+  form-> {
+    _id,
+    name,
+    "slug": slug.current,
+    description,
+    notificationEmail,
+    isActive,
+    fields[] {
+      "id": _key,
+      name,
+      label,
+      fieldType,
+      isRequired,
+      order,
+      placeholder,
+      options
+    }
+  },
   contactInfo,
   iframeSrc,
   cards[] {
@@ -36,8 +59,27 @@ const sectionDataProjection = `{
     description,
     icon,
     link,
-    subline_1
+    subline_1,
+     "image": image ${imageProjection},
   },
+  inpatient[] {
+    title,
+    description,
+    "image": image ${imageProjection},
+    link
+  },
+  inpatient {
+    title,
+    description,
+    "image": image ${imageProjection},
+    link
+  },
+  outpatient {
+    title,
+    description,
+    "image": image ${imageProjection},
+    link
+  },  
   members[] {
     name,
     designation,
@@ -56,14 +98,17 @@ const sectionDataProjection = `{
     "image": image ${imageProjection},
     primaryCta,
     secondaryCta,
-    badge
+    badge,
+    titlePrefix,
+    titleHighlight
   },
   items[] {
     title,
     description,
     icon,
     year,
-    label
+    label,
+    position
   },
   features[] {
     title,
@@ -107,6 +152,35 @@ export const SITE_SETTINGS_QUERY = `
     url,
     status
   }
+}
+`;
+
+// ── Site Details ──────────────────────────────────────────────────────────────
+export const ALL_SITE_DETAILS_QUERY = `
+*[_type == "siteDetail" && published == true] {
+  _id,
+  key,
+  value,
+  published
+}
+`;
+
+export const SITE_DETAIL_BY_KEY_QUERY = `
+*[_type == "siteDetail" && published == true && key == $key][0] {
+  _id,
+  key,
+  value,
+  published
+}
+`;
+
+// ── Socials ───────────────────────────────────────────────────────────────────
+export const ALL_SOCIALS_QUERY = `
+*[_type == "social" && status == true] {
+  _id,
+  socialKey,
+  socialValue,
+  status
 }
 `;
 
@@ -157,13 +231,15 @@ export const PAGE_BY_SLUG_QUERY = `
   "metaTitle": seo.metaTitle,
   "metaDescription": seo.metaDescription,
   "ogImage": seo.ogImage ${imageProjection},
+  "schemaMarkup": seo.schemaMarkup,
   isIndex,
   publishedAt,
-  sections[] {
+  sections[hideSection != true] {
     "id": _key,
-    sectionType,
+    "sectionType": _type,
     sortOrder,
-    "sectionData": sectionData ${sectionDataProjection}
+    hideSection,
+    "sectionData": @ ${sectionDataProjection}
   }
 }
 `;
@@ -176,13 +252,15 @@ export const PAGE_BY_TYPE_QUERY = `
   "metaTitle": seo.metaTitle,
   "metaDescription": seo.metaDescription,
   "ogImage": seo.ogImage ${imageProjection},
+  "schemaMarkup": seo.schemaMarkup,
   isIndex,
   publishedAt,
-  sections[] {
+  sections[hideSection != true] {
     "id": _key,
-    sectionType,
+    "sectionType": _type,
     sortOrder,
-    "sectionData": sectionData ${sectionDataProjection}
+    hideSection,
+    "sectionData": @ ${sectionDataProjection}
   }
 }
 `;

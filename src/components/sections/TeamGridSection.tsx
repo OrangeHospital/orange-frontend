@@ -141,7 +141,7 @@ export default function TeamGridSection({ data }: TeamGridSectionProps) {
         {/* Section Header - Centered */}
         <div className="text-center mb-20 max-w-3xl mx-auto">
           {data.subtitle && (
-            <p className="text-[#F7A707] text-xs sm:text-sm font-bold uppercase tracking-widest mb-3">
+            <p className="text-[#F7A707] text-md  sm:text-lg mb-3">
               {data.subtitle}
             </p>
           )}
