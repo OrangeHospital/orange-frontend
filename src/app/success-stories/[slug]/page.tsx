@@ -12,6 +12,7 @@ import type { Metadata } from "next";
 import React from "react";
 import RichTextContent from "@/components/sections/RichTextContent";
 import { PortableText } from "@portabletext/react";
+import { portableTextComponents } from "@/lib/portableTextComponents";
 import Image from "next/image";
 import { getSettingValue } from "@/lib/utils";
 
@@ -181,8 +182,11 @@ export default async function SuccessStoryDetailPage({
               )}
               <div className="prose prose-slate max-w-none">
                 {isPortableText ? (
-                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  <PortableText value={story.content as any[]} />
+                  <PortableText
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    value={story.content as any[]}
+                    components={portableTextComponents}
+                  />
                 ) : legacyContent ? (
                   <RichTextContent content={legacyContent} />
                 ) : (

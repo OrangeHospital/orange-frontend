@@ -98,12 +98,9 @@ export default async function Footer() {
   const getSetting = (key: string) =>
     settings.find((s) => s.key === key)?.value || "";
 
-  const companyPhone = getSetting("hospital_phone") || "+91 97243 05900";
-  const companyEmail =
-    getSetting("hospital_email") || "info@orangechildrenhospital.com";
-  const companyAddress =
-    getSetting("hospital_address") ||
-    "Opp. Satyamev Royal, Near Tapovan Circle, Chandkheda, Ahmedabad, Gujarat 382424";
+  const companyPhone = getSetting("hospital_phone");
+  const companyEmail = getSetting("hospital_email");
+  const companyAddress = getSetting("hospital_address");
 
   const hasSocials = socials.length > 0 && socials.some((s) => s.socialValue);
 

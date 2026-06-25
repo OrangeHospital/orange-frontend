@@ -44,6 +44,13 @@ export interface SanitySiteSettings {
   socialLinks?: SanitySocialLink[];
 }
 
+export interface SanitySiteDetail {
+  _id: string;
+  key: string;
+  value: string;
+  published: boolean;
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 export interface SanityPageSection {

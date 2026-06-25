@@ -65,6 +65,7 @@ interface PageResponse {
   metaTitle?: string;
   metaDescription?: string;
   pageType: string;
+  schemaMarkup?: string;
   sections: PageSection[];
 }
 
@@ -72,6 +73,13 @@ interface Setting {
   id: string;
   key: string;
   value: string;
+}
+
+interface SiteDetail {
+  id: string;
+  key: string;
+  value: string;
+  published: boolean;
 }
 
 interface MenusResponse {
@@ -154,7 +162,7 @@ interface FormField {
     | "FILE"
     | "DATE";
   isRequired: boolean;
-  order: number;
+  order?: number;
   placeholder: string | null;
   options: string | null;
 }
@@ -165,6 +173,15 @@ interface InquiryFormSectionData {
   formType?: string;
   variant?: string;
   formId?: string;
+  form?: {
+    _id: string;
+    name: string;
+    slug: string;
+    description?: string;
+    notificationEmail: string;
+    isActive: boolean;
+    fields: FormField[];
+  };
   contactInfo?: {
     phone?: string;
     email?: string;

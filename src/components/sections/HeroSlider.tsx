@@ -32,6 +32,9 @@ interface HeroSliderProps {
     subtitle?: string;
     primaryCta?: SlideCTA;
     secondaryCta?: SlideCTA;
+    titlePrefix?: string;
+    titleHighlight?: string;
+    image?: SlideImage | string;
   };
   lang?: string;
 }
@@ -49,7 +52,22 @@ export default function HeroSlider({ data }: HeroSliderProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   // Get slides from backend CMS data
-  const rawSlides: SlideData[] = data?.slides || [];
+  let rawSlides: SlideData[] = data?.slides || [];
+  if (
+    rawSlides.length === 0 &&
+    (data?.titleHighlight || data?.image || data?.titlePrefix)
+  ) {
+    rawSlides = [
+      {
+        titlePrefix: data.titlePrefix,
+        titleHighlight: data.titleHighlight,
+        subtitle: data.subtitle,
+        image: data.image,
+        primaryCta: data.primaryCta,
+        secondaryCta: data.secondaryCta,
+      },
+    ];
+  }
 
   const slides: ProcessedSlide[] = rawSlides.map((slide) => {
     // Resolve image URL
