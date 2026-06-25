@@ -3,8 +3,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Calendar, ArrowRight } from "lucide-react";
-// ISR: regenerate at most once per hour
-export const revalidate = 3600;
+
+export const revalidate = 30;
 
 export const metadata: Metadata = {
   title: "Pediatric & Neonatal Success Stories - Orange Children Hospital",

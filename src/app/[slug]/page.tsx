@@ -6,8 +6,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getSettingValue } from "@/lib/utils";
 
-// ISR: regenerate at most once per hour
-export const revalidate = 3600;
+export const revalidate = 30;
 
 interface UnifiedPageProps {
   params: Promise<{ slug: string }>;

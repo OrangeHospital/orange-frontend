@@ -16,8 +16,7 @@ import { portableTextComponents } from "@/lib/portableTextComponents";
 import Image from "next/image";
 import { getSettingValue } from "@/lib/utils";
 
-// ISR: regenerate at most once per hour
-export const revalidate = 3600;
+export const revalidate = 30;
 
 interface SuccessStoryProps {
   params: Promise<{ slug: string }>;

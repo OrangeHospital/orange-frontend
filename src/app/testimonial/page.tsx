@@ -2,8 +2,7 @@ import { fetchTestimonials } from "@/lib/api";
 import TestimonialClient from "./TestimonialClient";
 import type { Metadata } from "next";
 
-// ISR: regenerate at most once per hour
-export const revalidate = 3600;
+export const revalidate = 30;
 
 export const metadata: Metadata = {
   title: "Patient Reviews & Testimonials - Orange Children Hospital",
