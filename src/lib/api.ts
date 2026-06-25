@@ -31,7 +31,7 @@ import {
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-const REVALIDATE_SECONDS = process.env.NODE_ENV === "development" ? 0 : 3600;
+const REVALIDATE_SECONDS = process.env.NODE_ENV === "development" ? 0 : 0;
 
 function sanityFetch<T = any>(
   query: string,

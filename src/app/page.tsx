@@ -3,8 +3,7 @@ import SectionRenderer from "@/components/SectionRenderer";
 import type { Metadata } from "next";
 import { getSettingValue } from "@/lib/utils";
 
-// ISR: regenerate at most once per hour
-export const revalidate = 3600;
+export const revalidate = 30;
 
 export async function generateMetadata(): Promise<Metadata> {
   const canonical = "https://orangechildrenhospital.com/";
