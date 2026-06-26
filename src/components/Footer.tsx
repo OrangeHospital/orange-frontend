@@ -71,11 +71,10 @@ const LinkedinIcon = () => (
 
 export default async function Footer() {
   // Fetch from Sanity on the server — no client-side waterfall
-  const [socials, settings, quickLinksRes, facilitiesRes] = await Promise.all([
+  const [socials, settings, footerMenuRes] = await Promise.all([
     fetchSocial().catch(() => [] as Social[]),
     fetchSettings().catch(() => [] as Setting[]),
-    fetchMenuByName("Footer Quick Links").catch(() => null),
-    fetchMenuByName("Footer Facilities").catch(() => null),
+    fetchMenuByName("Footer").catch(() => null),
   ]);
 
   const getSocial = (key: string) =>
@@ -99,12 +98,19 @@ export default async function Footer() {
     getSetting("footer_copyright") ||
     "Orange Children Hospital. All Rights Reserved.";
 
+  const footerMenu =
+    footerMenuRes && footerMenuRes.success && Array.isArray(footerMenuRes.data)
+      ? footerMenuRes.data
+      : [];
+
+  // Column 1 (Quick Links)
+  const quickLinksItem = footerMenu[0];
+  const quickLinksTitle = quickLinksItem?.menuName || "Quick Links";
   const quickLinks =
-    quickLinksRes &&
-    quickLinksRes.success &&
-    quickLinksRes.data &&
-    quickLinksRes.data.length > 0
-      ? quickLinksRes.data.map((item: Menu) => ({
+    quickLinksItem &&
+    Array.isArray(quickLinksItem.children) &&
+    quickLinksItem.children.length > 0
+      ? quickLinksItem.children.map((item: Menu) => ({
           label: item.menuName,
           href: item.link,
           isClickable: item.isClickable !== false,
@@ -117,12 +123,14 @@ export default async function Footer() {
           { label: "Contact Us", href: "/contact", isClickable: true },
         ];
 
+  // Column 2 (Facilities)
+  const facilitiesItem = footerMenu[1];
+  const facilitiesTitle = facilitiesItem?.menuName || "Facilities";
   const facilities =
-    facilitiesRes &&
-    facilitiesRes.success &&
-    facilitiesRes.data &&
-    facilitiesRes.data.length > 0
-      ? facilitiesRes.data.map((item: Menu) => ({
+    facilitiesItem &&
+    Array.isArray(facilitiesItem.children) &&
+    facilitiesItem.children.length > 0
+      ? facilitiesItem.children.map((item: Menu) => ({
           label: item.menuName,
           href: item.link,
           isClickable: item.isClickable !== false,
@@ -230,7 +238,7 @@ export default async function Footer() {
           {/* Quick Links */}
           <div>
             <h3 className="font-bold text-white mb-4 text-base uppercase tracking-wider">
-              Quick Links
+              {quickLinksTitle}
             </h3>
             <ul className="space-y-2">
               {quickLinks.map((link) => (
@@ -253,7 +261,7 @@ export default async function Footer() {
           {/* Facilities */}
           <div>
             <h3 className="font-bold text-white mb-4 text-base uppercase tracking-wider">
-              Facilities
+              {facilitiesTitle}
             </h3>
             <ul className="space-y-2 text-sm text-gray-400">
               {facilities.map((fac) => (
