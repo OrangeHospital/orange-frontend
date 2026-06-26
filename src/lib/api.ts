@@ -31,7 +31,7 @@ import {
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
 
-const REVALIDATE_SECONDS = process.env.NODE_ENV === "development" ? 0 : 0;
+const REVALIDATE_SECONDS = process.env.NODE_ENV === "development" ? 0 : 300;
 
 function sanityFetch<T = any>(
   query: string,
@@ -340,12 +340,15 @@ export async function fetchMenuFront(): Promise<MenusResponse> {
   const items = raw.items
     .sort((a: any, b: any) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
     .map((item: any, idx: number) => {
-      const link =
-        item.linkType === "page"
-          ? `/${item.pageSlug || ""}`
-          : item.linkType === "blog"
-            ? `/blog/${item.blogSlug || ""}`
-            : item.externalLink || "#";
+      let link = "#";
+      if (item.linkType === "page") {
+        const slug = item.pageSlug || "";
+        link = slug === "/" ? "/" : `/${slug}`;
+      } else if (item.linkType === "blog") {
+        link = `/blog/${item.blogSlug || ""}`;
+      } else {
+        link = item.externalLink || "#";
+      }
 
       return {
         id: `menu-${idx}`,
@@ -361,12 +364,86 @@ export async function fetchMenuFront(): Promise<MenusResponse> {
         segment: null,
         children: Array.isArray(item.children)
           ? item.children.map((child: any, cidx: number) => {
-              const childLink =
-                child.linkType === "page"
-                  ? `/${child.pageSlug || ""}`
-                  : child.linkType === "blog"
-                    ? `/blog/${child.blogSlug || ""}`
-                    : child.externalLink || "#";
+              let childLink = "#";
+              if (child.linkType === "page") {
+                const slug = child.pageSlug || "";
+                childLink = slug === "/" ? "/" : `/${slug}`;
+              } else if (child.linkType === "blog") {
+                childLink = `/blog/${child.blogSlug || ""}`;
+              } else {
+                childLink = child.externalLink || "#";
+              }
+              return {
+                id: `menu-${idx}-${cidx}`,
+                menuName: child.menuName || "",
+                link: childLink,
+                parentPageId: `menu-${idx}`,
+                sortOrder: child.sortOrder ?? cidx,
+                status: child.status === 1 ? "active" : "inactive",
+                isClickable: child.isClickable !== false,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                parentPage: null,
+                segment: null,
+                children: [],
+              };
+            })
+          : [],
+      };
+    });
+  return { success: true, status: 200, message: "Menu fetched", data: items };
+}
+
+/**
+ * Fetch any navigation menu by its menu type name (e.g. "Footer Quick Links").
+ */
+export async function fetchMenuByName(
+  menuTypeName: string,
+): Promise<MenusResponse> {
+  const raw = await sanityFetch(NAVIGATION_MENU_QUERY, {
+    menuTypeName,
+  });
+
+  if (!raw || !Array.isArray(raw.items)) {
+    return { success: true, status: 200, message: "No menu", data: [] };
+  }
+
+  const items = raw.items
+    .sort((a: any, b: any) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+    .map((item: any, idx: number) => {
+      let link = "#";
+      if (item.linkType === "page") {
+        const slug = item.pageSlug || "";
+        link = slug === "/" ? "/" : `/${slug}`;
+      } else if (item.linkType === "blog") {
+        link = `/blog/${item.blogSlug || ""}`;
+      } else {
+        link = item.externalLink || "#";
+      }
+
+      return {
+        id: `menu-${idx}`,
+        menuName: item.menuName || "",
+        link,
+        parentPageId: null,
+        sortOrder: item.sortOrder ?? idx,
+        status: item.status === 1 ? "active" : "inactive",
+        isClickable: item.isClickable !== false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        parentPage: null,
+        segment: null,
+        children: Array.isArray(item.children)
+          ? item.children.map((child: any, cidx: number) => {
+              let childLink = "#";
+              if (child.linkType === "page") {
+                const slug = child.pageSlug || "";
+                childLink = slug === "/" ? "/" : `/${slug}`;
+              } else if (child.linkType === "blog") {
+                childLink = `/blog/${child.blogSlug || ""}`;
+              } else {
+                childLink = child.externalLink || "#";
+              }
               return {
                 id: `menu-${idx}-${cidx}`,
                 menuName: child.menuName || "",

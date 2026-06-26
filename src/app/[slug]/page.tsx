@@ -80,7 +80,6 @@ export default async function UnifiedPage({ params }: UnifiedPageProps) {
   const sortedSections = pageData!.sections.sort(
     (a, b) => a.sortOrder - b.sortOrder,
   );
-
   return (
     <main className="min-h-screen">
       {pageData?.schemaMarkup && (
