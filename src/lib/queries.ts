@@ -4,7 +4,7 @@
 const imageProjection = `{
   "id": asset->_id,
   "fileUrl": asset->url,
-  "altText": alt,
+  "altText": coalesce(alt, altText),
   "caption": caption
 }`;
 
@@ -25,6 +25,7 @@ const sectionDataProjection = `{
   "image": image ${imageProjection},
   imagePosition,
   variant,
+  layout,
   primaryCta,
   secondaryCta,
   highlights,
@@ -108,7 +109,10 @@ const sectionDataProjection = `{
     icon,
     year,
     label,
-    position
+    position,
+    subtitle,
+    logoType,
+    "logo": logo ${imageProjection}
   },
   features[] {
     title,

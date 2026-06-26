@@ -6,28 +6,45 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-export default function Header() {
+interface HeaderProps {
+  menu?: Menu[];
+}
+
+export default function Header({ menu }: HeaderProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
-  // Navigation items simplified to match the real website screenshot
-  const navItems = [
-    { label: "Home", href: "/" },
-    { label: "About", href: "/about" },
-    { label: "Doctors", href: "/doctors" },
-    { label: "Facilities", href: "/facilities" },
-    {
-      label: "Patient Reviews",
-      href: "/testimonial",
-      hasDropdown: true,
-      dropdownItems: [
-        { label: "Testimonial", href: "/testimonial" },
-        { label: "Success Stories", href: "/success-stories" },
-      ],
-    },
-    { label: "Contact", href: "/contact" },
-  ];
+  // Navigation items loaded dynamically from Sanity if available, otherwise fallback
+  const navItems =
+    menu && menu.length > 0
+      ? menu.map((item: Menu) => ({
+          label: item.menuName || "",
+          href: item.link || "#",
+          hasDropdown: Array.isArray(item.children) && item.children.length > 0,
+          dropdownItems: Array.isArray(item.children)
+            ? item.children.map((child: Menu) => ({
+                label: child.menuName || "",
+                href: child.link || "#",
+              }))
+            : [],
+        }))
+      : [
+          { label: "Home", href: "/" },
+          { label: "About", href: "/about" },
+          { label: "Doctors", href: "/doctors" },
+          { label: "Facilities", href: "/facilities" },
+          {
+            label: "Patient Reviews",
+            href: "/testimonial",
+            hasDropdown: true,
+            dropdownItems: [
+              { label: "Testimonial", href: "/testimonial" },
+              { label: "Success Stories", href: "/success-stories" },
+            ],
+          },
+          { label: "Contact", href: "/contact" },
+        ];
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-100 shadow-none">

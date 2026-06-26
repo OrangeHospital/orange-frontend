@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { fetchSocial, fetchSettings } from "@/lib/api";
+import { fetchSocial, fetchSettings, fetchMenuByName } from "@/lib/api";
 
 // Inline SVG social media icons
 const FacebookIcon = () => (
@@ -69,27 +69,13 @@ const LinkedinIcon = () => (
   </svg>
 );
 
-const quickLinks = [
-  { label: "Home", href: "/" },
-  { label: "About Us", href: "/about" },
-  { label: "Our Doctors", href: "/doctors" },
-  { label: "Our Facilities", href: "/facilities" },
-  { label: "Contact Us", href: "/contact" },
-];
-
-const facilities = [
-  { label: "40 Bedded NICU and PICU" },
-  { label: "High-tech Operation Theater" },
-  { label: "24 HRS Ambulance Services" },
-  { label: "24X7 Neonatologist & Intensivist" },
-  { label: "Isolated Pediatric Dialysis Unit" },
-];
-
 export default async function Footer() {
   // Fetch from Sanity on the server — no client-side waterfall
-  const [socials, settings] = await Promise.all([
+  const [socials, settings, quickLinksRes, facilitiesRes] = await Promise.all([
     fetchSocial().catch(() => [] as Social[]),
     fetchSettings().catch(() => [] as Setting[]),
+    fetchMenuByName("Footer Quick Links").catch(() => null),
+    fetchMenuByName("Footer Facilities").catch(() => null),
   ]);
 
   const getSocial = (key: string) =>
@@ -103,6 +89,63 @@ export default async function Footer() {
   const companyAddress = getSetting("hospital_address");
 
   const hasSocials = socials.length > 0 && socials.some((s) => s.socialValue);
+
+  // Parse custom dynamic contents
+  const aboutText =
+    getSetting("footer_about") ||
+    "Orange Children Hospital is Gujarat's one of the largest 50 bedded pediatric hospital. We specialize in Neonatal & Pediatric Critical Care with Level 3 NICU and PICU.";
+
+  const copyrightText =
+    getSetting("footer_copyright") ||
+    "Orange Children Hospital. All Rights Reserved.";
+
+  const quickLinks =
+    quickLinksRes &&
+    quickLinksRes.success &&
+    quickLinksRes.data &&
+    quickLinksRes.data.length > 0
+      ? quickLinksRes.data.map((item: Menu) => ({
+          label: item.menuName,
+          href: item.link,
+          isClickable: item.isClickable !== false,
+        }))
+      : [
+          { label: "Home", href: "/", isClickable: true },
+          { label: "About Us", href: "/about", isClickable: true },
+          { label: "Our Doctors", href: "/doctors", isClickable: true },
+          { label: "Our Facilities", href: "/facilities", isClickable: true },
+          { label: "Contact Us", href: "/contact", isClickable: true },
+        ];
+
+  const facilities =
+    facilitiesRes &&
+    facilitiesRes.success &&
+    facilitiesRes.data &&
+    facilitiesRes.data.length > 0
+      ? facilitiesRes.data.map((item: Menu) => ({
+          label: item.menuName,
+          href: item.link,
+          isClickable: item.isClickable !== false,
+        }))
+      : [
+          { label: "40 Bedded NICU and PICU", href: "#", isClickable: false },
+          {
+            label: "High-tech Operation Theater",
+            href: "#",
+            isClickable: false,
+          },
+          { label: "24 HRS Ambulance Services", href: "#", isClickable: false },
+          {
+            label: "24X7 Neonatologist & Intensivist",
+            href: "#",
+            isClickable: false,
+          },
+          {
+            label: "Isolated Pediatric Dialysis Unit",
+            href: "#",
+            isClickable: false,
+          },
+        ];
 
   return (
     <footer className="bg-slate-900 text-gray-300 pt-16 pb-8 border-t border-slate-800">
@@ -122,11 +165,7 @@ export default async function Footer() {
                 className="h-10 w-auto object-contain"
               />
             </Link>
-            <p className="text-sm text-gray-400 leading-relaxed">
-              Orange Children Hospital is Gujarat&apos;s one of the largest 50
-              bedded pediatric hospital. We specialize in Neonatal &amp;
-              Pediatric Critical Care with Level 3 NICU and PICU.
-            </p>
+            <p className="text-sm text-gray-400 leading-relaxed">{aboutText}</p>
             {hasSocials && (
               <div className="flex items-center gap-3 mt-2">
                 {getSocial("facebook") && (
@@ -196,12 +235,16 @@ export default async function Footer() {
             <ul className="space-y-2">
               {quickLinks.map((link) => (
                 <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="hover:text-[#F7A707] transition-colors text-sm"
-                  >
-                    {link.label}
-                  </Link>
+                  {link.isClickable ? (
+                    <Link
+                      href={link.href}
+                      className="hover:text-[#F7A707] transition-colors text-sm"
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <span className="text-sm text-gray-400">{link.label}</span>
+                  )}
                 </li>
               ))}
             </ul>
@@ -216,7 +259,16 @@ export default async function Footer() {
               {facilities.map((fac) => (
                 <li key={fac.label} className="flex items-center gap-2">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#F7A707]" />
-                  {fac.label}
+                  {fac.isClickable ? (
+                    <Link
+                      href={fac.href}
+                      className="hover:text-[#F7A707] transition-colors text-sm"
+                    >
+                      {fac.label}
+                    </Link>
+                  ) : (
+                    <span>{fac.label}</span>
+                  )}
                 </li>
               ))}
             </ul>
@@ -241,8 +293,7 @@ export default async function Footer() {
 
         <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-gray-500">
-            &copy; {new Date().getFullYear()} Orange Children Hospital. All
-            Rights Reserved.
+            &copy; {new Date().getFullYear()} {copyrightText}
           </p>
         </div>
       </div>
