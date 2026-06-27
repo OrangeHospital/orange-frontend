@@ -14,6 +14,21 @@
   --surface-hover: #f1f5f9;
   --muted: #64748b;
   --border: #e2e8f0;
+
+  /* Additional layout variables for HeroSlider */
+  --line: #e2e8f0;
+  --leaf-500: #10b981;
+  --leaf-100: #d1fae5;
+  --ink-900: #0f172a;
+  --ink-800: #1e293b;
+  --ink-700: #334155;
+  --bone: #f1f5f9;
+  --orange-100: #ffedd5;
+  --orange-300: #fdba74;
+  --orange-400: #fb923c;
+  --orange-500: #f97316;
+  --orange-600: #ea580c;
+  --cream: #fbf7f1;
 }
 
 @theme inline {
@@ -60,4 +75,36 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Infinite Horizontal Marquee Styles */
+@keyframes marquee-ltr {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes marquee-rtl {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee-ltr {
+  animation: marquee-ltr 45s linear infinite;
+}
+
+.animate-marquee-rtl {
+  animation: marquee-rtl 45s linear infinite;
+}
+
+.hover-pause:hover .animate-marquee-ltr,
+.hover-pause:hover .animate-marquee-rtl {
+  animation-play-state: paused;
 }

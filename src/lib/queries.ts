@@ -135,6 +135,22 @@ const sectionDataProjection = `{
     description,
     icon
   },
+  bottomItems[] {
+    title,
+    icon
+  },
+  savedKidsTag {
+    show,
+    label,
+    value,
+    avatars
+  },
+  nicuTag {
+    show,
+    label,
+    value,
+    stars
+  },
   quote,
   quoteAuthor,
   content
