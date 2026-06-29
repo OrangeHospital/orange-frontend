@@ -1,5 +1,6 @@
 import { fetchPageSections, fetchSettings } from "@/lib/api";
 import SectionRenderer from "@/components/SectionRenderer";
+import MapReviewSection from "@/components/sections/MapReviewSection";
 import type { Metadata } from "next";
 import { getSettingValue } from "@/lib/utils";
 
@@ -50,12 +51,33 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function Home() {
   let pageData;
   let settings: Setting[] = [];
+  let initialReviews = [];
+  let initialSummary = null;
 
   try {
     pageData = await fetchPageSections("home");
-
     settings = await fetchSettings();
-  } catch {
+
+    // Server-side fetching of Google Map reviews to prevent layout shift (CLS)
+    const reviewApiUrl = process.env.MAP_REVIEW_API_URL;
+    const reviewApiToken = process.env.MAP_REVIEW_API_TOKEN;
+    if (reviewApiUrl && reviewApiToken) {
+      const res = await fetch(reviewApiUrl, {
+        headers: {
+          Authorization: `Bearer ${reviewApiToken}`,
+          "Content-Type": "application/json",
+        },
+        next: { revalidate: 3600 },
+      });
+      if (res.ok) {
+        const json = await res.json();
+        const payload = json?.data ?? json;
+        initialReviews = payload?.reviews || [];
+        initialSummary = payload?.summary || null;
+      }
+    }
+  } catch (error) {
+    console.error("Error loading home page components/reviews:", error);
     return (
       <main className="flex min-h-screen items-center justify-center px-6">
         <div className="text-center">
@@ -88,6 +110,15 @@ export default async function Home() {
         sections={sortedSections}
         settings={settings}
         lang="en"
+      />
+      <MapReviewSection
+        data={{
+          title: "What Our Patients Say",
+          description:
+            "Real experiences from families who trusted us with their child's care.",
+        }}
+        initialReviews={initialReviews}
+        initialSummary={initialSummary}
       />
     </main>
   );

@@ -19,6 +19,8 @@ import ParagraphEditorSection from "./sections/ParagraphEditorSection";
 import InquiryFormSection from "./sections/InquiryFormSection";
 import MapEmbedSection from "./sections/MapEmbedSection";
 import LogoGridSection from "./sections/LogoGridSection";
+import MapReviewSection from "./sections/MapReviewSection";
+import React from "react";
 
 interface SectionRendererProps {
   sections: PageSection[];
@@ -26,18 +28,49 @@ interface SectionRendererProps {
   lang?: string;
 }
 
+// These section types control their own full-bleed background — don't alternate them
+const SELF_BG_TYPES = new Set([
+  "hero",
+  "hero_slider",
+  "heroslider",
+  "cta_section",
+  "about_hero",
+]);
+
 export default function SectionRenderer({
   sections,
   settings,
   lang = "en",
 }: SectionRendererProps) {
+  let altIndex = 0;
+
   return (
     <>
       {sections.map((mapping, index) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const section = (mapping as any).section || mapping;
-
         const key = `${section.sectionType}-${index}`;
+
+        const isSelfBg = SELF_BG_TYPES.has(section.sectionType);
+
+        // Alternate: cream (#FFF8EE) → white → cream → white ...
+        const bgStyle: React.CSSProperties = isSelfBg
+          ? {}
+          : altIndex % 2 === 0
+            ? { backgroundColor: "#fff7f0" }
+            : { backgroundColor: "#ffffff" };
+
+        if (!isSelfBg) altIndex++;
+
+        // Wrapper that injects the alternating background directly on the section element
+        const wrap = (node: React.ReactNode) =>
+          isSelfBg ? (
+            node
+          ) : (
+            <div key={key} style={bgStyle}>
+              {node}
+            </div>
+          );
 
         switch (section.sectionType) {
           case "hero":
@@ -46,33 +79,34 @@ export default function SectionRenderer({
             ) : null;
 
           case "stats_content":
-            return section.sectionData ? (
-              <StatsContentSection key={key} data={section.sectionData} />
-            ) : null;
+            return section.sectionData
+              ? wrap(<StatsContentSection data={section.sectionData} />)
+              : null;
 
           case "content_with_image":
-            return section.sectionData ? (
-              <ContentWithImageSection
-                key={key}
-                data={section.sectionData}
-                lang={lang}
-              />
-            ) : null;
+            return section.sectionData
+              ? wrap(
+                  <ContentWithImageSection
+                    data={section.sectionData}
+                    lang={lang}
+                  />,
+                )
+              : null;
 
           case "icon_card_grid":
-            return section.sectionData ? (
-              <IconCardGridSection key={key} data={section.sectionData} />
-            ) : null;
+            return section.sectionData
+              ? wrap(<IconCardGridSection data={section.sectionData} />)
+              : null;
 
           case "image_card_grid":
-            return section.sectionData ? (
-              <ImageCardGridSection key={key} data={section.sectionData} />
-            ) : null;
+            return section.sectionData
+              ? wrap(<ImageCardGridSection data={section.sectionData} />)
+              : null;
 
           case "team_grid":
-            return section.sectionData ? (
-              <TeamGridSection key={key} data={section.sectionData} />
-            ) : null;
+            return section.sectionData
+              ? wrap(<TeamGridSection data={section.sectionData} />)
+              : null;
 
           case "cta_section":
             return section.sectionData ? (
@@ -85,73 +119,79 @@ export default function SectionRenderer({
             ) : null;
 
           case "about_intro":
-            return section.sectionData ? (
-              <AboutIntroSection key={key} data={section.sectionData} />
-            ) : null;
+            return section.sectionData
+              ? wrap(<AboutIntroSection data={section.sectionData} />)
+              : null;
 
           case "highlight_quote":
-            return section.sectionData ? (
-              <HighlightQuoteSection key={key} data={section.sectionData} />
-            ) : null;
+            return section.sectionData
+              ? wrap(<HighlightQuoteSection data={section.sectionData} />)
+              : null;
 
           case "reasons_grid":
-            return section.sectionData ? (
-              <ReasonsGridSection key={key} data={section.sectionData} />
-            ) : null;
+            return section.sectionData
+              ? wrap(<ReasonsGridSection data={section.sectionData} />)
+              : null;
 
           case "values_section":
-            return section.sectionData ? (
-              <ValuesSection key={key} data={section.sectionData} />
-            ) : null;
+            return section.sectionData
+              ? wrap(<ValuesSection data={section.sectionData} />)
+              : null;
 
           case "stats_progress":
-            return section.sectionData ? (
-              <StatsProgressSection key={key} data={section.sectionData} />
-            ) : null;
+            return section.sectionData
+              ? wrap(<StatsProgressSection data={section.sectionData} />)
+              : null;
 
-          case "facility_feature": {
-            return section.sectionData ? (
-              <FacilityFeatureSection key={key} data={section.sectionData} />
-            ) : null;
-          }
+          case "facility_feature":
+            return section.sectionData
+              ? wrap(<FacilityFeatureSection data={section.sectionData} />)
+              : null;
 
           case "patient_care_services":
-            return section.sectionData ? (
-              <PatientCareServices key={key} data={section.sectionData} />
-            ) : null;
+            return section.sectionData
+              ? wrap(<PatientCareServices data={section.sectionData} />)
+              : null;
 
           case "timeline_slider":
-            return section.sectionData ? (
-              <HorizontalTimelineSection key={key} data={section.sectionData} />
-            ) : null;
+            return section.sectionData
+              ? wrap(<HorizontalTimelineSection data={section.sectionData} />)
+              : null;
 
           case "paragraph_editor":
-            return section.sectionData || section.content ? (
-              <ParagraphEditorSection
-                key={key}
-                data={section.sectionData || section.content}
-              />
-            ) : null;
+            return section.sectionData || section.content
+              ? wrap(
+                  <ParagraphEditorSection
+                    data={section.sectionData || section.content}
+                  />,
+                )
+              : null;
 
           case "inquiry_form":
-            return (
+            return wrap(
               <InquiryFormSection
-                key={key}
                 data={section.sectionData as InquiryFormSectionData}
                 settings={settings}
-              />
+              />,
             );
+
           case "logo_grid":
-            return section.sectionData || section.content ? (
-              <LogoGridSection
-                key={key}
-                data={section.sectionData || section.content}
-              />
-            ) : null;
+            return section.sectionData || section.content
+              ? wrap(
+                  <LogoGridSection
+                    data={section.sectionData || section.content}
+                  />,
+                )
+              : null;
+
+          case "map_review":
+            return wrap(<MapReviewSection data={section.sectionData ?? {}} />);
+
           case "map_embed":
-            return section.sectionData ? (
-              <MapEmbedSection key={key} data={section.sectionData} />
-            ) : null;
+            return section.sectionData
+              ? wrap(<MapEmbedSection data={section.sectionData} />)
+              : null;
+
           case "hero_slider":
           case "heroslider":
             return section.sectionData ? (
@@ -161,6 +201,7 @@ export default function SectionRenderer({
                 settings={settings}
               />
             ) : null;
+
           default:
             return null;
         }

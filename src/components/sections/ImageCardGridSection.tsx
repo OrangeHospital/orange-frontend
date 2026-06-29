@@ -61,10 +61,10 @@ export default function ImageCardGridSection({
     data.primaryCta?.label || data.ctaLabel || "Explore all facilities";
 
   return (
-    <section className="relative overflow-hidden py-20 md:py-28 bg-[#F7F6F2] w-full">
+    <section className="relative overflow-hidden py-20 md:py-28  w-full">
       {/* Ambient glow blobs */}
-      <div className="absolute top-0 left-[-5%] h-[700px] w-[700px] rounded-full bg-[color:var(--primary)]/[0.04] blur-[160px] pointer-events-none" />
-      <div className="absolute bottom-0 right-[-5%] h-[600px] w-[600px] rounded-full bg-orange-300/[0.06] blur-[160px] pointer-events-none" />
+      {/* <div className="absolute top-0 left-[-5%] h-[700px] w-[700px] rounded-full bg-[color:var(--primary)]/[0.04] blur-[160px] pointer-events-none" />
+      <div className="absolute bottom-0 right-[-5%] h-[600px] w-[600px] rounded-full bg-orange-300/[0.06] blur-[160px] pointer-events-none" /> */}
 
       <div className="container mx-auto px-6 max-w-7xl relative z-10">
         {/* Section Header */}

@@ -105,7 +105,7 @@ export default function IconCardGridSection({
         {(data.title || data.subtitle) && (
           <div className="text-center mb-10 max-w-3xl mx-auto">
             {data.subtitle && (
-              <p className="text-[#EF641A] text-xs sm:text-sm font-medium uppercase tracking-[0.2em] mb-3">
+              <p className="text-[color:var(--primary)] text-xs sm:text-sm font-medium uppercase tracking-[0.2em] mb-3">
                 {data.subtitle}
               </p>
             )}

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { getImageUrl, isValidImageUrl } from "@/lib/utils";
+import Reveal from "@/components/site/Reveal";
 
 interface HighlightQuoteSectionProps {
   data: {
@@ -27,19 +28,21 @@ export default function HighlightQuoteSection({
     <section className="relative w-full bg-[#050811] overflow-hidden min-h-[450px] md:min-h-[500px] flex flex-col md:flex-row">
       {/* Left side: Elegant Quote Content */}
       <div className="w-full md:w-[45%] flex flex-col justify-center px-8 py-16 md:py-24 md:pl-16 lg:pl-24 xl:pl-32 z-10 bg-[#050811]">
-        {/* Top elegant quote icon */}
-        <span className="text-[#F7A707] text-6xl md:text-7xl font-serif leading-none mb-2 select-none -ml-3 block">
-          “
-        </span>
+        <Reveal>
+          {/* Top elegant quote icon */}
+          <span className="text-[#F7A707] text-6xl md:text-7xl font-serif leading-none mb-2 select-none -ml-3 block">
+            “
+          </span>
 
-        {description && (
-          <blockquote className="text-lg sm:text-xl md:text-2xl font-light text-slate-100 leading-relaxed italic pr-4 md:pr-8">
-            {description}
-          </blockquote>
-        )}
+          {description && (
+            <blockquote className="text-lg sm:text-xl md:text-2xl font-light text-slate-100 leading-relaxed italic pr-4 md:pr-8">
+              {description}
+            </blockquote>
+          )}
 
-        {/* Bottom decorative accent line */}
-        <div className="h-0.5 w-12 bg-gradient-to-r from-[#F7A707] to-[#EF641A] mt-6 rounded-full" />
+          {/* Bottom decorative accent line */}
+          <div className="h-0.5 w-12 bg-gradient-to-r from-[#F7A707] to-[#EF641A] mt-6 rounded-full" />
+        </Reveal>
       </div>
 
       {/* Right side: Image with Gradient Fade */}

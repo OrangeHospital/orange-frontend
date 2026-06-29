@@ -126,7 +126,7 @@ export default function TeamGridSection({ data }: TeamGridSectionProps) {
   };
 
   return (
-    <section className="py-20 bg-gradient-to-b from-[#FFFAF2] to-white relative overflow-hidden select-none w-full">
+    <section className="py-20  relative overflow-hidden select-none w-full">
       {/* Background Decorative Glows */}
       <div className="absolute top-1/4 left-0 w-96 h-96 bg-[color:var(--primary)]/5 rounded-full filter blur-3xl pointer-events-none" />
       <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-[color:var(--primary)]/5 rounded-full filter blur-3xl pointer-events-none" />

@@ -23,7 +23,7 @@ export default function CTASection({ data }: CTASectionProps) {
           {/* Action Button */}
           <Link
             href={ctaHref}
-            className="px-6 py-3 font-semibold text-xs sm:text-sm bg-[#F7A707] hover:bg-[#EF641A] text-slate-800 rounded-md transition-colors inline-flex items-center gap-2 shadow-sm select-none"
+            className="px-6 py-3 font-semibold text-xs sm:text-sm bg-[#F7A707] hover:bg-[#EF641A] text-white rounded-md transition-colors inline-flex items-center gap-2 shadow-sm select-none"
           >
             {ctaLabel}
             <span className="text-sm">➔</span>
