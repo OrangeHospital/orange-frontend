@@ -46,16 +46,19 @@ export async function fetchWithTimeout(
 ): Promise<Response> {
   const { timeout = 5000, ...options } = init || {};
 
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
+  return new Promise<Response>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error("Request timeout"));
+    }, timeout);
 
-  try {
-    const response = await fetch(input, {
-      ...options,
-      signal: controller.signal,
-    });
-    return response;
-  } finally {
-    clearTimeout(id);
-  }
+    fetch(input, options)
+      .then((response) => {
+        clearTimeout(timer);
+        resolve(response);
+      })
+      .catch((err) => {
+        clearTimeout(timer);
+        reject(err);
+      });
+  });
 }

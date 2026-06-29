@@ -79,7 +79,7 @@ export default async function Home() {
         }
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
-        console.error(
+        console.warn(
           "Map Review API fetch failed on home page:",
           err.message || err,
         );

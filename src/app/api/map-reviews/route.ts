@@ -8,10 +8,11 @@ export async function GET() {
   const token = process.env.MAP_REVIEW_API_TOKEN;
 
   if (!url || !token) {
-    return NextResponse.json(
-      { error: "Map review API not configured" },
-      { status: 500 },
-    );
+    return NextResponse.json({
+      reviews: [],
+      summary: null,
+      message: "Map review API not configured",
+    });
   }
 
   try {
@@ -25,21 +26,27 @@ export async function GET() {
     });
 
     if (!res.ok) {
-      return NextResponse.json(
-        { error: `Upstream error: ${res.status}` },
-        { status: res.status },
+      console.warn(
+        `[map-reviews] Upstream returned error status: ${res.status}`,
       );
+      return NextResponse.json({
+        reviews: [],
+        summary: null,
+        error: `Upstream error: ${res.status}`,
+      });
     }
 
     const json = await res.json();
     // API returns { success, data: { summary, reviews } } — unwrap data
     const payload = json?.data ?? json;
     return NextResponse.json(payload);
-  } catch (err) {
-    console.error("[map-reviews] fetch error:", err);
-    return NextResponse.json(
-      { error: "Failed to fetch reviews" },
-      { status: 500 },
-    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (err: any) {
+    console.warn("[map-reviews] fetch error:", err.message || err);
+    return NextResponse.json({
+      reviews: [],
+      summary: null,
+      error: err.message || "Failed to fetch reviews",
+    });
   }
 }
