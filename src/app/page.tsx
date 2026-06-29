@@ -2,7 +2,7 @@ import { fetchPageSections, fetchSettings } from "@/lib/api";
 import SectionRenderer from "@/components/SectionRenderer";
 import MapReviewSection from "@/components/sections/MapReviewSection";
 import type { Metadata } from "next";
-import { getSettingValue } from "@/lib/utils";
+import { getSettingValue, fetchWithTimeout } from "@/lib/utils";
 
 export const revalidate = 30;
 
@@ -62,18 +62,27 @@ export default async function Home() {
     const reviewApiUrl = process.env.MAP_REVIEW_API_URL;
     const reviewApiToken = process.env.MAP_REVIEW_API_TOKEN;
     if (reviewApiUrl && reviewApiToken) {
-      const res = await fetch(reviewApiUrl, {
-        headers: {
-          Authorization: `Bearer ${reviewApiToken}`,
-          "Content-Type": "application/json",
-        },
-        next: { revalidate: 3600 },
-      });
-      if (res.ok) {
-        const json = await res.json();
-        const payload = json?.data ?? json;
-        initialReviews = payload?.reviews || [];
-        initialSummary = payload?.summary || null;
+      try {
+        const res = await fetchWithTimeout(reviewApiUrl, {
+          headers: {
+            Authorization: `Bearer ${reviewApiToken}`,
+            "Content-Type": "application/json",
+          },
+          next: { revalidate: 3600 },
+          timeout: 5000,
+        });
+        if (res.ok) {
+          const json = await res.json();
+          const payload = json?.data ?? json;
+          initialReviews = payload?.reviews || [];
+          initialSummary = payload?.summary || null;
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (err: any) {
+        console.error(
+          "Map Review API fetch failed on home page:",
+          err.message || err,
+        );
       }
     }
   } catch (error) {

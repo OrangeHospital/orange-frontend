@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { fetchWithTimeout } from "@/lib/utils";
 
 export const revalidate = 3600; // cache for 1 hour
 
@@ -14,12 +15,13 @@ export async function GET() {
   }
 
   try {
-    const res = await fetch(url, {
+    const res = await fetchWithTimeout(url, {
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
       next: { revalidate: 3600 },
+      timeout: 5000,
     });
 
     if (!res.ok) {

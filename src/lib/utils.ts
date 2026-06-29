@@ -39,3 +39,23 @@ export function getImageUrl(url?: string) {
   const base = fileBase.endsWith("/") ? fileBase : `${fileBase}/`;
   return `${base}${url}`;
 }
+
+export async function fetchWithTimeout(
+  input: RequestInfo | URL,
+  init?: RequestInit & { timeout?: number },
+): Promise<Response> {
+  const { timeout = 5000, ...options } = init || {};
+
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(input, {
+      ...options,
+      signal: controller.signal,
+    });
+    return response;
+  } finally {
+    clearTimeout(id);
+  }
+}
