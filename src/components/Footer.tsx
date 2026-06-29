@@ -90,7 +90,7 @@ export default async function Footer() {
           })
           .then((j) => j?.data?.summary ?? j?.summary ?? null)
           .catch((err) => {
-            console.error(
+            console.warn(
               "[Footer] Map Review fetch failed:",
               err.message || err,
             );
