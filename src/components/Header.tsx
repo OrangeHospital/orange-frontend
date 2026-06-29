@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface HeaderProps {
   menu?: Menu[];
@@ -14,6 +14,18 @@ export default function Header({ menu }: HeaderProps) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+
+  // Lock body scroll when mobile menu is open to prevent background scroll leaks
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
 
   // Navigation items loaded dynamically from Sanity if available, otherwise fallback
   const navItems =
@@ -62,7 +74,7 @@ export default function Header({ menu }: HeaderProps) {
         </Link>
 
         {/* Navigation Middle */}
-        <nav className="hidden lg:flex items-center gap-8 font-medium h-full">
+        <nav className="hidden lg:flex items-center gap-4 xl:gap-8 font-medium h-full">
           {navItems.map((item) => {
             let isActive =
               item.href === "/"
@@ -166,6 +178,7 @@ export default function Header({ menu }: HeaderProps) {
       >
         {/* Backdrop */}
         <div
+          role="presentation"
           className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm"
           onClick={() => setMobileMenuOpen(false)}
         />
@@ -258,7 +271,7 @@ export default function Header({ menu }: HeaderProps) {
                             key={subItem.label}
                             href={subItem.href}
                             onClick={() => setMobileMenuOpen(false)}
-                            className={`px-4 py-2.5 rounded-md text-sm font-semibold transition-colors duration-200 ${
+                            className={`px-4 py-3.5 rounded-md text-sm font-semibold transition-colors duration-200 ${
                               isSubActive
                                 ? "text-[#F7A707] bg-orange-50/30"
                                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-50/60"

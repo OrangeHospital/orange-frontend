@@ -215,7 +215,7 @@ export default function HorizontalTimelineSection({
                 {items.map((item, index) => (
                   <div
                     key={index}
-                    className="relative pl-8 pb-4 border-l-2 border-[#F7A707]/30"
+                    className="relative pl-8 pb-4 border-l-2 border-[#F7A707]/30 last:border-l-0"
                   >
                     {/* Timeline Node */}
                     <div className="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-gradient-to-tr from-[#F7A707] to-[#EF641A]" />

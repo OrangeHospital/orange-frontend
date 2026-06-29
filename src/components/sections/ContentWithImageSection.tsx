@@ -48,9 +48,9 @@ export default function ContentWithImageSection({
       <div
         className={cn(
           "absolute top-[-10%] w-[700px] h-[700px] rounded-full blur-[160px] pointer-events-none opacity-50",
-          isReversed
-            ? "right-[-15%] bg-orange-100"
-            : "left-[-15%] bg-orange-100",
+          // isReversed
+          //   ? "right-[-15%] bg-orange-100"
+          //   : "left-[-15%] bg-orange-100",
         )}
       />
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[900px] h-[300px] rounded-full bg-[#FFF7ED] blur-[80px] pointer-events-none opacity-70" />
@@ -59,8 +59,8 @@ export default function ContentWithImageSection({
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.025]"
         style={{
-          backgroundImage:
-            "radial-gradient(circle, #7c3700 1px, transparent 1px)",
+          // backgroundImage:
+          //   "radial-gradient(circle, #7c3700 1px, transparent 1px)",
           backgroundSize: "32px 32px",
         }}
       />
@@ -94,7 +94,7 @@ export default function ContentWithImageSection({
               />
 
               {/* Main image container */}
-              <div className="relative aspect-[4/3] w-full rounded-[28px] overflow-hidden shadow-2xl shadow-orange-900/10 group">
+              <div className="relative w-full rounded-[28px] overflow-hidden shadow-2xl shadow-orange-900/10 group">
                 {imageSrc ? (
                   <>
                     <Image
@@ -102,8 +102,13 @@ export default function ContentWithImageSection({
                       alt={
                         data.image?.altText || data.title || "Orange Hospital"
                       }
-                      fill
-                      style={{ objectFit: "cover" }}
+                      width={900}
+                      height={600}
+                      style={{
+                        width: "100%",
+                        height: "auto",
+                        display: "block",
+                      }}
                       className="transition-transform duration-[1200ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04] will-change-transform"
                       quality={95}
                     />
