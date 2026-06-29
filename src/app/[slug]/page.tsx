@@ -17,7 +17,9 @@ export async function generateStaticParams() {
   const slugs: Array<{ slug: string }> = await sanityClient
     .fetch(ALL_PAGE_SLUGS_QUERY)
     .catch(() => []);
-  return slugs.filter((s) => s.slug).map((s) => ({ slug: s.slug }));
+  return slugs
+    .filter((s) => s.slug && s.slug !== "/" && s.slug !== "")
+    .map((s) => ({ slug: s.slug }));
 }
 
 export async function generateMetadata({

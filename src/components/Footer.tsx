@@ -4,6 +4,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { fetchSocial, fetchSettings, fetchMenuByName } from "@/lib/api";
+import { fetchWithTimeout } from "@/lib/utils";
 
 // Inline SVG social media icons
 const FacebookIcon = () => (
@@ -70,21 +71,39 @@ const LinkedinIcon = () => (
 );
 
 export default async function Footer() {
+  const mapReviewUrl = process.env.MAP_REVIEW_API_URL;
+  const mapReviewToken = process.env.MAP_REVIEW_API_TOKEN;
+
+  const mapReviewPromise =
+    mapReviewUrl && mapReviewToken
+      ? fetchWithTimeout(mapReviewUrl, {
+          headers: {
+            Authorization: `Bearer ${mapReviewToken}`,
+            "Content-Type": "application/json",
+          },
+          next: { revalidate: 3600 },
+          timeout: 5000,
+        })
+          .then((r) => {
+            if (!r.ok) throw new Error(`Status ${r.status}`);
+            return r.json();
+          })
+          .then((j) => j?.data?.summary ?? j?.summary ?? null)
+          .catch((err) => {
+            console.error(
+              "[Footer] Map Review fetch failed:",
+              err.message || err,
+            );
+            return null;
+          })
+      : Promise.resolve(null);
+
   // Fetch from Sanity on the server — no client-side waterfall
   const [socials, settings, footerMenuRes, mapReviewRes] = await Promise.all([
     fetchSocial().catch(() => [] as Social[]),
     fetchSettings().catch(() => [] as Setting[]),
     fetchMenuByName("Footer").catch(() => null),
-    fetch(`${process.env.MAP_REVIEW_API_URL}`, {
-      headers: {
-        Authorization: `Bearer ${process.env.MAP_REVIEW_API_TOKEN ?? ""}`,
-        "Content-Type": "application/json",
-      },
-      next: { revalidate: 3600 },
-    })
-      .then((r) => r.json())
-      .then((j) => j?.data?.summary ?? j?.summary ?? null)
-      .catch(() => null),
+    mapReviewPromise,
   ]);
 
   const reviewSummary = mapReviewRes as {
