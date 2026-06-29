@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getImageUrl, isValidImageUrl } from "@/lib/utils";
+import Reveal from "@/components/site/Reveal";
+import { User } from "lucide-react";
 
 interface TeamGridSectionProps {
   data: PageSection["sectionData"];
@@ -19,82 +21,51 @@ export default function TeamGridSection({ data }: TeamGridSectionProps) {
     isMainRow = false,
     index = 0,
   ) => {
-    const photoContainer = (
-      <div className="relative aspect-square w-full rounded-none overflow-visible mb-9 bg-slate-50 shadow-[0_4px_20px_rgba(0,0,0,0.02)] cursor-pointer">
-        {member.photo?.fileUrl && isValidImageUrl(member.photo.fileUrl) ? (
-          <Image
-            src={getImageUrl(member.photo.fileUrl)}
-            alt={member.name}
-            fill
-            className="object-cover object-top transition-transform duration-500 group-hover:scale-102"
-            quality={95}
-            priority={isMainRow}
-          />
-        ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 bg-slate-100/70 select-none">
-            {/* Clean minimalist avatar SVG */}
-            <svg
-              className="w-12 h-12 text-slate-300"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.2"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
-              />
-            </svg>
-          </div>
-        )}
-
-        {/* Overlapping white name badge */}
-        <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white px-3 sm:px-5 py-1.5 sm:py-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.05)] border border-slate-100/80 text-center w-max max-w-[95%] min-h-[40px] sm:min-h-[46px] flex items-center justify-center transition-all duration-300 group-hover:shadow-[0_10px_25px_rgba(247,167,7,0.15)] group-hover:border-[#F7A707]/30">
-          <span className="font-extrabold text-xs sm:text-[15px] text-[#2B6CB0] tracking-wide transition-colors duration-200 group-hover:text-[#F7A707] whitespace-nowrap text-center leading-tight">
-            {member.name}
-          </span>
+    const cardContent = (
+      <div className="flex flex-col h-full bg-white rounded-[24px] border border-slate-100/80 shadow-[0_8px_30px_rgba(0,0,0,0.03)] overflow-hidden group hover:shadow-[0_15px_40px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300">
+        {/* Photo Container */}
+        <div className="relative aspect-square w-full bg-slate-50 overflow-hidden">
+          {member.photo?.fileUrl && isValidImageUrl(member.photo.fileUrl) ? (
+            <Image
+              src={getImageUrl(member.photo.fileUrl)}
+              alt={member.name}
+              fill
+              style={{ objectFit: "cover", objectPosition: "top" }}
+              className="transition-transform duration-500 group-hover:scale-103"
+              quality={95}
+              priority={isMainRow}
+            />
+          ) : (
+            <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 bg-slate-100/70 select-none">
+              <User className="w-12 h-12 stroke-[1.25]" />
+            </div>
+          )}
         </div>
-      </div>
-    );
 
-    return (
-      <div
-        key={`${member.name}-${index}`}
-        className="flex flex-col items-center h-full bg-transparent group w-full"
-      >
-        {member.link ? (
-          <Link
-            href={
-              member.link.startsWith("/")
-                ? member.link
-                : `/doctors/${member.link}`
-            }
-            className="w-full"
-          >
-            {photoContainer}
-          </Link>
-        ) : (
-          photoContainer
-        )}
+        {/* Content Details Block */}
+        <div className="p-6 flex-grow flex flex-col justify-start text-left bg-white">
+          {/* Orange horizontal indicator line */}
+          <div className="w-8 h-1 bg-[color:var(--primary)] rounded-full mb-4" />
 
-        {/* Doctor Details (Designation + Socials) */}
-        <div className="text-center px-2 flex-grow flex flex-col items-center justify-between w-full">
+          {/* Doctor Name */}
+          <h3 className="font-display font-bold text-lg sm:text-[20px] text-[color:var(--ink-900)] leading-tight tracking-tight mb-2 group-hover:text-[color:var(--primary)] transition-colors duration-200">
+            {member.name}
+          </h3>
+
           {/* Designation */}
-          <p className="text-xs sm:text-[13px] font-semibold text-slate-500 leading-relaxed mb-4 max-w-[90%] uppercase tracking-wider">
+          <p className="text-xs sm:text-[13px] text-slate-500 font-normal leading-relaxed">
             {member.designation || ""}
           </p>
 
-          {/* Social Icons matching the user design exactly */}
+          {/* Social Icons if present */}
           {(member.facebook || member.twitter || member.instagram) && (
-            <div className="flex items-center gap-4 mt-auto text-slate-400 transition-colors duration-300 group-hover:text-slate-500">
+            <div className="flex items-center gap-3.5 mt-5 pt-4 border-t border-slate-100 text-slate-400 group-hover:text-slate-500 transition-colors duration-300">
               {member.facebook && (
                 <a
                   href={member.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-[#F7A707] transition-all duration-200 transform hover:scale-110"
+                  className="hover:text-[color:var(--primary)] transition-all duration-200 transform hover:scale-110"
                   aria-label="Facebook"
                 >
                   <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -107,7 +78,7 @@ export default function TeamGridSection({ data }: TeamGridSectionProps) {
                   href={member.twitter}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-[#F7A707] transition-all duration-200 transform hover:scale-110"
+                  className="hover:text-[color:var(--primary)] transition-all duration-200 transform hover:scale-110"
                   aria-label="Twitter"
                 >
                   <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -120,7 +91,7 @@ export default function TeamGridSection({ data }: TeamGridSectionProps) {
                   href={member.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-[#F7A707] transition-all duration-200 transform hover:scale-110"
+                  className="hover:text-[color:var(--primary)] transition-all duration-200 transform hover:scale-110"
                   aria-label="Instagram"
                 >
                   <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -133,56 +104,87 @@ export default function TeamGridSection({ data }: TeamGridSectionProps) {
         </div>
       </div>
     );
+
+    return member.link ? (
+      <Link
+        key={`${member.name}-${index}`}
+        href={
+          member.link.startsWith("/") ? member.link : `/doctors/${member.link}`
+        }
+        className="block h-full rounded-[24px] cursor-pointer"
+      >
+        {cardContent}
+      </Link>
+    ) : (
+      <div
+        key={`${member.name}-${index}`}
+        className="block h-full rounded-[24px]"
+      >
+        {cardContent}
+      </div>
+    );
   };
 
   return (
-    <section className="py-16 md:py-24 bg-white select-none">
-      <div className="container mx-auto px-6 max-w-7xl">
+    <section className="py-20 bg-gradient-to-b from-[#FFFAF2] to-white relative overflow-hidden select-none w-full">
+      {/* Background Decorative Glows */}
+      <div className="absolute top-1/4 left-0 w-96 h-96 bg-[color:var(--primary)]/5 rounded-full filter blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-[color:var(--primary)]/5 rounded-full filter blur-3xl pointer-events-none" />
+
+      <div className="container mx-auto px-6 max-w-7xl relative z-10">
         {/* Section Header - Centered */}
-        <div className="text-center mb-20 max-w-3xl mx-auto">
-          {data.subtitle && (
-            <p className="text-[#F7A707] text-md  sm:text-lg mb-3">
-              {data.subtitle}
-            </p>
-          )}
-          {data.title && (
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-800 tracking-tight leading-tight mb-4">
-              {data.title}
-            </h2>
-          )}
-          {paragraphs.length > 0 ? (
-            <div className="space-y-3 max-w-4xl mx-auto text-sm sm:text-base text-slate-500 font-normal leading-relaxed">
-              {paragraphs.map((para, idx) => (
-                <p key={idx}>{para}</p>
-              ))}
-            </div>
-          ) : (
-            data.description && (
-              <p className="max-w-2xl mx-auto text-xs sm:text-sm text-slate-400 font-normal leading-relaxed">
-                {data.description}
-              </p>
-            )
-          )}
-        </div>
+        <Reveal>
+          <div className="text-center mb-16 max-w-3xl mx-auto">
+            {data.subtitle && (
+              <span className="text-[color:var(--primary)] font-bold text-xs uppercase tracking-[0.18em] mb-3 block">
+                — {data.subtitle}
+              </span>
+            )}
+            {data.title && (
+              <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-[color:var(--ink-900)] tracking-tight leading-[1.15] mb-5">
+                {data.title}
+              </h2>
+            )}
+            <div className="w-20 h-1 bg-[color:var(--primary)] mx-auto mb-6 rounded-full" />
+
+            {paragraphs.length > 0 ? (
+              <div className="space-y-3 max-w-4xl mx-auto text-sm sm:text-base text-slate-500 font-normal leading-relaxed">
+                {paragraphs.map((para, idx) => (
+                  <p key={idx}>{para}</p>
+                ))}
+              </div>
+            ) : (
+              data.description && (
+                <p className="max-w-2xl mx-auto text-sm text-slate-500 font-normal leading-relaxed">
+                  {data.description}
+                </p>
+              )
+            )}
+          </div>
+        </Reveal>
 
         {/* Doctor Team Grid */}
-        <div className="space-y-16">
-          {/* Top Row: 2 Doctors side-by-side (Centered on Desktop) */}
+        <div className="space-y-12">
+          {/* Top Row: Leadership Doctors */}
           {topRowMembers.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-16 max-w-3xl mx-auto justify-center">
-              {topRowMembers.map((member, idx) =>
-                renderDoctorCard(member, true, idx),
-              )}
-            </div>
+            <Reveal>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-3xl mx-auto justify-center">
+                {topRowMembers.map((member, idx) =>
+                  renderDoctorCard(member, true, idx),
+                )}
+              </div>
+            </Reveal>
           )}
 
-          {/* Bottom Row: 4 Doctors side-by-side */}
+          {/* Bottom Row: Rest of the Team */}
           {bottomRowMembers.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-16 max-w-6xl mx-auto">
-              {bottomRowMembers.map((member, idx) =>
-                renderDoctorCard(member, false, idx),
-              )}
-            </div>
+            <Reveal>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+                {bottomRowMembers.map((member, idx) =>
+                  renderDoctorCard(member, false, idx),
+                )}
+              </div>
+            </Reveal>
           )}
         </div>
       </div>

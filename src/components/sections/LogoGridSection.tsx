@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Reveal from "@/components/site/Reveal";
 import { getImageUrl, isValidImageUrl } from "@/lib/utils";
 
 interface LogoImage {
@@ -14,6 +15,7 @@ interface LogoItem {
   subtitle?: string;
   logoType?: string;
 }
+
 interface LogoGridSectionData {
   title?: string;
   subtitle?: string;
@@ -35,6 +37,7 @@ interface LogoGridSectionData {
     logoType?: string;
   }>;
 }
+
 interface LogoGridSectionProps {
   data: LogoGridSectionData;
 }
@@ -57,127 +60,135 @@ export default function LogoGridSection({ data }: LogoGridSectionProps) {
     return fallback;
   };
 
-  const getLogoTitle = (logo: LogoItem["logo"]) => {
-    if (logo && typeof logo === "object") {
-      return logo.title;
-    }
-    return undefined;
-  };
+  // Process items list
+  const itemsList = (data.items || []).map((item) => ({
+    title: item.title,
+    logoSrc: getLogoSrc(item.logo),
+    alt: getLogoAlt(item.logo, item.title),
+  }));
 
-  if (data.layout === "two-column") {
-    return (
-      <section className="relative overflow-hidden bg-gradient-to-b from-slate-50/50 to-white py-16 md:py-24 border-y border-slate-100/60 select-none">
-        {/* Soft elegant glows to elevate aesthetics */}
-        <div className="absolute top-10 left-[-100px] h-[300px] w-[300px] rounded-full pointer-events-none blur-[100px] opacity-40 bg-orange-500/5" />
-        <div className="absolute bottom-10 right-[-100px] h-[300px] w-[300px] rounded-full pointer-events-none blur-[100px] opacity-40 bg-[#1E5CB8]/5" />
-
-        <div className="container mx-auto px-6 lg:px-12 max-w-7xl">
-          {/* Section Header */}
-          <div className="mb-12 flex flex-col items-center justify-center text-center">
-            {data.badge && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-widest bg-orange-500/10 text-orange-600 border border-orange-500/20 mb-3 w-fit">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-                {data.badge}
-              </span>
-            )}
-            <h2 className="text-4xl sm:text-4xl font-extrabold text-[#0c2a5c] tracking-tight leading-[1.2] mb-4">
-              {data.title}
-            </h2>
-            <div className="w-16 h-1 rounded-full bg-gradient-to-r from-orange-500 to-[#EF641A]" />
-          </div>
-
-          {/* Logo Grid */}
-          <div className="w-full">
-            {data.items && data.items.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 sm:gap-5">
-                {data.items.map((item, index) => {
-                  const logoSrc = getLogoSrc(item.logo);
-
-                  return (
-                    <div
-                      key={index}
-                      className="group flex items-center justify-center rounded-xl border border-slate-100 bg-white p-2 sm:p-3 shadow-[0_4px_12px_rgba(0,0,0,0.02)] transition-all duration-300 hover:shadow-[0_12px_24px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 hover:border-orange-500/20 min-h-[70px] sm:min-h-[85px] md:min-h-[95px] aspect-[4/3] w-full"
-                    >
-                      {logoSrc ? (
-                        <Image
-                          src={logoSrc}
-                          alt={getLogoAlt(item.logo, item.title)}
-                          title={getLogoTitle(item.logo)}
-                          width={180}
-                          height={90}
-                          className="max-w-[90%] max-h-[85%] w-auto h-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                        />
-                      ) : (
-                        <span className="text-xs font-semibold text-slate-400 text-center">
-                          {item.title}
-                        </span>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-    );
+  if (itemsList.length === 0) {
+    return null;
   }
-  // Fallback / default layout
+
+  // Duplicate elements to repeat and fill horizontal space dynamically
+  const repeatCount = Math.max(2, Math.ceil(30 / itemsList.length));
+  const displayItems = Array(repeatCount).fill(itemsList).flat();
+  const displayItemsReversed = Array(repeatCount)
+    .fill([...itemsList].reverse())
+    .flat();
+
+  // Resolve description
+  const descriptionText =
+    data.description1 || data.description2 || data.subtitle || "";
+
   return (
-    <section className="bg-gradient-to-br from-[#f9fafb] to-white py-10 md:py-20 lg:py-28">
-      <div className="container mx-auto px-6 lg:px-12 max-w-[1400px]">
-        {/* Section Header */}
-        <div className="mb-8 md:mb-16 lg:mb-20 text-left md:text-center">
-          <h2 className="mb-4 text-3xl font-semibold text-[#1f2937] md:mb-6 md:text-4xl lg:text-5xl">
-            {data.title}
-          </h2>
-          {data.subtitle && (
-            <p className="mx-auto max-w-3xl text-base text-[#4a5565] md:text-lg lg:text-xl">
-              {data.subtitle}
+    <section
+      data-testid="logo_grid"
+      className="py-10 md:py-12 bg-white border-y border-[color:var(--line)] overflow-hidden"
+    >
+      <style>{`
+        @keyframes logo-marquee-ltr {
+          0% {
+            transform: translate3d(-50%, 0, 0);
+          }
+          100% {
+            transform: translate3d(0%, 0, 0);
+          }
+        }
+        @keyframes logo-marquee-rtl {
+          0% {
+            transform: translate3d(0%, 0, 0);
+          }
+          100% {
+            transform: translate3d(-50%, 0, 0);
+          }
+        }
+        .logo-animate-ltr {
+          animation: logo-marquee-ltr 38s linear infinite;
+        }
+        .logo-animate-rtl {
+          animation: logo-marquee-rtl 38s linear infinite;
+        }
+        .hover-pause:hover .logo-animate-ltr,
+        .hover-pause:hover .logo-animate-rtl {
+          animation-play-state: paused;
+        }
+      `}</style>
+      <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-[0.7fr_1.3fr] lg:grid-cols-[0.6fr_1.4fr] gap-12 items-center">
+        {/* Left Column: text content */}
+        <Reveal>
+          {data.title && (
+            <p className="text-[12px] tracking-wider uppercase font-semibold text-[color:var(--orange-600)] mb-1.5">
+              {data.title}
             </p>
           )}
-        </div>
+          <h2 className="font-semibold text-[color:var(--ink-900)] text-3xl sm:text-4xl leading-[1.2] tracking-tight">
+            {data.title}
+          </h2>
+          {descriptionText && (
+            <p className="mt-5 text-[15px] text-[color:var(--muted)] leading-relaxed max-w-sm">
+              {descriptionText}
+            </p>
+          )}
+        </Reveal>
 
-        {/* Logo Grid */}
-        {data.items && data.items.length > 0 && (
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
-            {data.items.map((item, index) => {
-              const logoSrc = getLogoSrc(item.logo);
-              return (
-                <div
-                  key={index}
-                  className="group flex flex-col items-center rounded-2xl border border-[#e2e2e2] bg-white p-8 text-center shadow-sm transition-all hover:shadow-lg"
-                >
-                  {/* Logo */}
-                  <div className="relative mb-6 h-20 w-auto flex items-center justify-center">
-                    {logoSrc ? (
-                      <Image
-                        src={logoSrc}
-                        alt={getLogoAlt(item.logo, item.title)}
-                        title={getLogoTitle(item.logo)}
-                        width={160}
-                        height={80}
-                        className="object-contain max-h-20"
-                      />
-                    ) : null}
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="mb-2 text-xl font-semibold text-[#1f2937] md:text-2xl">
-                    {item.title}
-                  </h3>
-
-                  {/* Subtitle */}
-                  {item.subtitle && (
-                    <p className="text-sm text-[#4a5565] md:text-base">
-                      {item.subtitle}
-                    </p>
-                  )}
-                </div>
-              );
-            })}
+        {/* Right Column: horizontal marquee */}
+        <div
+          className="relative overflow-hidden py-4 hover-pause flex flex-col gap-3"
+          style={{
+            maskImage:
+              "linear-gradient(90deg, transparent, black 12%, black 88%, transparent)",
+            WebkitMaskImage:
+              "linear-gradient(90deg, transparent, black 12%, black 88%, transparent)",
+          }}
+        >
+          {/* LTR Track (Left to Right) */}
+          <div className="flex gap-3 w-max logo-animate-ltr">
+            {displayItems.map((item, idx) => (
+              <div
+                key={`ltr-${idx}`}
+                className="shrink-0 inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-[color:var(--cream)] border border-[color:var(--line)] text-[14px] font-semibold text-[color:var(--ink-700)] select-none min-h-[58px]"
+              >
+                <span className="w-2.5 h-2.5 rounded-full bg-[color:var(--leaf-500)]" />
+                {item.logoSrc ? (
+                  <Image
+                    src={item.logoSrc}
+                    alt={item.alt}
+                    width={140}
+                    height={40}
+                    className="h-10 w-auto object-contain"
+                  />
+                ) : (
+                  <span>{item.title}</span>
+                )}
+              </div>
+            ))}
           </div>
-        )}
+
+          {/* RTL Track (Right to Left) */}
+          <div className="flex gap-3 w-max logo-animate-rtl">
+            {displayItemsReversed.map((item, idx) => (
+              <div
+                key={`rtl-${idx}`}
+                className="shrink-0 inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-white border border-[color:var(--line)] text-[14px] font-semibold text-[color:var(--ink-700)] select-none min-h-[58px]"
+              >
+                <span className="w-2.5 h-2.5 rounded-full bg-[color:var(--orange-500)]" />
+                {item.logoSrc ? (
+                  <Image
+                    src={item.logoSrc}
+                    alt={item.alt}
+                    width={140}
+                    height={40}
+                    className="h-10 w-auto object-contain"
+                  />
+                ) : (
+                  <span>{item.title}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

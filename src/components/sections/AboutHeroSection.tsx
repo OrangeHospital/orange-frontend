@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { Home, ChevronRight } from "lucide-react";
 import { getImageUrl, isValidImageUrl } from "@/lib/utils";
 
 interface AboutHeroSectionProps {
@@ -23,42 +25,124 @@ export default function AboutHeroSection({ data }: AboutHeroSectionProps) {
       : "/icu_infrastructure.png";
 
   return (
-    <section className="relative w-full h-[45vh] min-h-[320px] md:h-[50vh] overflow-hidden bg-slate-950 flex items-center justify-center">
-      {/* Background Image with Dark Premium Vignette */}
-      <div className="absolute inset-0 z-0 opacity-75">
+    <section className="relative w-full h-[45vh] min-h-[320px] md:h-[45vh] overflow-hidden bg-[#0a0e1a] flex items-center justify-center">
+      {/* Background Image */}
+      <div className="absolute inset-0 z-0">
         <Image
           src={heroImage}
           alt={data.photo?.altText || "Orange Children Hospital"}
           fill
           priority
-          className="object-cover object-center"
+          className="object-cover object-center scale-105"
           quality={95}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/60 via-slate-950/40 to-slate-950/80" />
       </div>
+
+      {/* Multi-layer premium overlay */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-[#0a0e1a]/75 via-[#0a0e1a]/50 to-[#0a0e1a]/90" />
+      <div className="absolute inset-0 z-10 bg-gradient-to-r from-[#0a0e1a]/60 via-transparent to-transparent" />
+
+      {/* Decorative orange glow blob */}
+      <div
+        className="absolute z-10 rounded-full pointer-events-none blur-3xl opacity-20"
+        style={{
+          width: 480,
+          height: 480,
+          background: "radial-gradient(circle, #F26A1B 0%, transparent 70%)",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+        }}
+      />
+
+      {/* Animated grid pattern */}
+      <div
+        className="absolute inset-0 z-10 opacity-[0.04] pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.4) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+      />
 
       {/* Hero Content */}
-      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto flex flex-col items-center gap-3">
-        {/* Breadcrumb Path */}
-        <nav className="flex items-center space-x-2 text-xs md:text-sm font-medium tracking-widest text-[#F7A707] uppercase">
+      <div className="relative z-20 text-center px-6 max-w-4xl mx-auto flex flex-col items-center gap-4">
+        {/* Breadcrumb */}
+        <motion.nav
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.18em] uppercase"
+        >
           <Link
             href="/"
-            className="hover:text-white transition-colors duration-200"
+            className="flex items-center gap-1 text-[#F7A707]/80 hover:text-[#F7A707] transition-colors duration-200"
           >
-            Home
+            <Home size={11} />
+            <span>Home</span>
           </Link>
-          <span className="text-slate-500 font-light">/</span>
-          <span className="text-slate-300 font-normal">{title}</span>
-        </nav>
+          <ChevronRight size={11} className="text-white/30" />
+          <span className="text-white/50">{title}</span>
+        </motion.nav>
 
         {/* Title */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-white leading-tight tracking-wide mt-2">
-          {title}
-        </h1>
+        <motion.h1
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.18 }}
+          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.1] tracking-tight"
+        >
+          {title.split(" ").map((word, i, arr) =>
+            i === arr.length - 1 ? (
+              <span
+                key={i}
+                style={{
+                  background: "linear-gradient(120deg,#FF8C3D,#F26A1B)",
+                  WebkitBackgroundClip: "text",
+                  color: "transparent",
+                }}
+              >
+                {" "}
+                {word}
+              </span>
+            ) : (
+              <span key={i}>
+                {i > 0 ? " " : ""}
+                {word}
+              </span>
+            ),
+          )}
+        </motion.h1>
 
-        {/* Dynamic bottom accent bar */}
-        <div className="h-0.5 w-12 bg-[#F7A707] mt-4 rounded-full" />
+        {/* Subtitle */}
+
+        {/* Accent bar */}
+        <motion.div
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={{ scaleX: 1, opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.38 }}
+          className="mt-1 flex items-center gap-2 origin-center"
+        >
+          <div className="h-px w-8 bg-white/20 rounded-full" />
+          <div
+            className="h-[3px] w-14 rounded-full"
+            style={{ background: "linear-gradient(90deg,#F26A1B,#F7A707)" }}
+          />
+          <div className="h-px w-8 bg-white/20 rounded-full" />
+        </motion.div>
       </div>
+
+      {/* Bottom fade-into-page */}
+      <div className="absolute bottom-0 left-0 right-0 z-20 h-16 bg-gradient-to-t from-white/10 to-transparent pointer-events-none" />
+
+      {/* Subtle bottom border glow */}
+      <div
+        className="absolute bottom-0 left-0 right-0 z-20 h-px pointer-events-none"
+        style={{
+          background:
+            "linear-gradient(90deg, transparent, #F26A1B44, transparent)",
+        }}
+      />
     </section>
   );
 }

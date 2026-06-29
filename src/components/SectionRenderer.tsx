@@ -155,7 +155,11 @@ export default function SectionRenderer({
           case "hero_slider":
           case "heroslider":
             return section.sectionData ? (
-              <HeroSlider key={key} data={section.sectionData} />
+              <HeroSlider
+                key={key}
+                data={section.sectionData}
+                settings={settings}
+              />
             ) : null;
           default:
             return null;
