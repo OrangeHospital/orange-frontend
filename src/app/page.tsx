@@ -59,31 +59,28 @@ export default async function Home() {
     settings = await fetchSettings();
 
     // Server-side fetching of Google Map reviews to prevent layout shift (CLS)
-    const reviewApiUrl = process.env.MAP_REVIEW_API_URL;
-    const reviewApiToken = process.env.MAP_REVIEW_API_TOKEN;
-    if (reviewApiUrl && reviewApiToken) {
-      try {
-        const res = await fetchWithTimeout(reviewApiUrl, {
+    try {
+      const res = await fetchWithTimeout(
+        "https://api.dcomweb.app/map-review/all",
+        {
           headers: {
-            Authorization: `Bearer ${reviewApiToken}`,
+            Authorization:
+              "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnROYW1lIjoiT3JhbmdlIENoaWxkcmVuIEhvc3BpdGFsIiwicmVhc29uIjoiTWFwIFJldmlld3MiLCJpYXQiOjE3ODI1MzgwMjd9._O5IktlyAPZYxMswmbZoaBL8l3v0nj-kyH0kLL9jn3Y",
             "Content-Type": "application/json",
           },
-          next: { revalidate: 3600 },
-          timeout: 5000,
-        });
-        if (res.ok) {
-          const json = await res.json();
-          const payload = json?.data ?? json;
-          initialReviews = payload?.reviews || [];
-          initialSummary = payload?.summary || null;
-        }
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (err: any) {
-        console.warn(
-          "Map Review API fetch failed on home page:",
-          err.message || err,
-        );
+          cache: "no-store",
+          timeout: 8000,
+        },
+      );
+      if (res.ok) {
+        const json = await res.json();
+        const payload = json?.data ?? json;
+        initialReviews = payload?.reviews || [];
+        initialSummary = payload?.summary || null;
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      console.warn("[map-review] fetch failed:", err.message || err);
     }
   } catch (error) {
     console.error("Error loading home page components/reviews:", error);
