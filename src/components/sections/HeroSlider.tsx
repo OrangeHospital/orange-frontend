@@ -244,7 +244,7 @@ export default function HeroSlider({ data, settings }: HeroSliderProps) {
                 >
                   {s.titleHighlight}
                 </span>
-                <svg
+                {/* <svg
                   viewBox="0 0 320 16"
                   className="absolute -bottom-2 left-0 w-full"
                   preserveAspectRatio="none"
@@ -257,7 +257,7 @@ export default function HeroSlider({ data, settings }: HeroSliderProps) {
                     strokeLinecap="round"
                     opacity="0.55"
                   />
-                </svg>
+                </svg> */}
               </span>
             </motion.h1>
           </AnimatePresence>
