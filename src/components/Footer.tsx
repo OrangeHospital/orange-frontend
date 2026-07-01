@@ -71,32 +71,27 @@ const LinkedinIcon = () => (
 );
 
 export default async function Footer() {
-  const mapReviewUrl = process.env.MAP_REVIEW_API_URL;
-  const mapReviewToken = process.env.MAP_REVIEW_API_TOKEN;
-
-  const mapReviewPromise =
-    mapReviewUrl && mapReviewToken
-      ? fetchWithTimeout(mapReviewUrl, {
-          headers: {
-            Authorization: `Bearer ${mapReviewToken}`,
-            "Content-Type": "application/json",
-          },
-          next: { revalidate: 3600 },
-          timeout: 5000,
-        })
-          .then((r) => {
-            if (!r.ok) throw new Error(`Status ${r.status}`);
-            return r.json();
-          })
-          .then((j) => j?.data?.summary ?? j?.summary ?? null)
-          .catch((err) => {
-            console.warn(
-              "[Footer] Map Review fetch failed:",
-              err.message || err,
-            );
-            return null;
-          })
-      : Promise.resolve(null);
+  const mapReviewPromise = fetchWithTimeout(
+    "https://api.dcomweb.app/map-review/all",
+    {
+      headers: {
+        Authorization:
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnROYW1lIjoiT3JhbmdlIENoaWxkcmVuIEhvc3BpdGFsIiwicmVhc29uIjoiTWFwIFJldmlld3MiLCJpYXQiOjE3ODI1MzgwMjd9._O5IktlyAPZYxMswmbZoaBL8l3v0nj-kyH0kLL9jn3Y",
+        "Content-Type": "application/json",
+      },
+      cache: "no-store",
+      timeout: 8000,
+    },
+  )
+    .then((r) => {
+      if (!r.ok) throw new Error(`Status ${r.status}`);
+      return r.json();
+    })
+    .then((j) => j?.data?.summary ?? j?.summary ?? null)
+    .catch((err) => {
+      console.warn("[Footer] Map Review fetch failed:", err.message || err);
+      return null;
+    });
 
   // Fetch from Sanity on the server — no client-side waterfall
   const [socials, settings, footerMenuRes, mapReviewRes] = await Promise.all([
