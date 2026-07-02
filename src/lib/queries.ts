@@ -112,7 +112,13 @@ const sectionDataProjection = `{
     position,
     subtitle,
     logoType,
-    "logo": logo ${imageProjection}
+    "logo": logo ${imageProjection},
+    badgeText,
+    headline,
+    shortDescription,
+    points,
+    "image": image ${imageProjection},
+    link
   },
   features[] {
     title,
@@ -151,6 +157,13 @@ const sectionDataProjection = `{
     value,
     stars
   },
+  badgeText,
+  headline,
+  shortDescription,
+  link,
+  showGoogleReviews,
+  sectionTitle,
+  "title": coalesce(sectionTitle, title),
   quote,
   quoteAuthor,
   content

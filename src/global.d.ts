@@ -24,6 +24,13 @@ interface PageSection {
     title?: string;
     subtitle?: string;
     description?: string;
+    badgeText?: string;
+    headline?: string;
+    shortDescription?: string;
+    highlightBoxText?: string;
+    bullets?: Array<{ title: string; description?: string }>;
+    partnerLogo?: MediaAsset;
+    cta?: { label?: string; href?: string };
     badge?: {
       label: string;
     };

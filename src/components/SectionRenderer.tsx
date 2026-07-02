@@ -20,12 +20,15 @@ import InquiryFormSection from "./sections/InquiryFormSection";
 import MapEmbedSection from "./sections/MapEmbedSection";
 import LogoGridSection from "./sections/LogoGridSection";
 import MapReviewSection from "./sections/MapReviewSection";
+import AnnouncementSection from "./sections/AnnouncementSection";
 import React from "react";
 
 interface SectionRendererProps {
   sections: PageSection[];
   settings?: Array<{ key: string; value: string }>;
   lang?: string;
+  initialReviews?: [];
+  initialSummary?: null;
 }
 
 // These section types control their own full-bleed background — don't alternate them
@@ -41,6 +44,8 @@ export default function SectionRenderer({
   sections,
   settings,
   lang = "en",
+  initialReviews,
+  initialSummary,
 }: SectionRendererProps) {
   let altIndex = 0;
 
@@ -185,11 +190,22 @@ export default function SectionRenderer({
               : null;
 
           case "map_review":
-            return wrap(<MapReviewSection data={section.sectionData ?? {}} />);
+            return wrap(
+              <MapReviewSection
+                data={section.sectionData ?? {}}
+                initialReviews={initialReviews}
+                initialSummary={initialSummary}
+              />,
+            );
 
           case "map_embed":
             return section.sectionData
               ? wrap(<MapEmbedSection data={section.sectionData} />)
+              : null;
+
+          case "announcement_section":
+            return section.sectionData
+              ? wrap(<AnnouncementSection data={section.sectionData} />)
               : null;
 
           case "hero_slider":

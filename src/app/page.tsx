@@ -1,6 +1,5 @@
 import { fetchPageSections, fetchSettings } from "@/lib/api";
 import SectionRenderer from "@/components/SectionRenderer";
-import MapReviewSection from "@/components/sections/MapReviewSection";
 import type { Metadata } from "next";
 import { getSettingValue, fetchWithTimeout } from "@/lib/utils";
 
@@ -112,17 +111,11 @@ export default async function Home() {
           }}
         />
       )}
+
       <SectionRenderer
         sections={sortedSections}
         settings={settings}
         lang="en"
-      />
-      <MapReviewSection
-        data={{
-          title: "What Our Patients Say",
-          description:
-            "Real experiences from families who trusted us with their child's care.",
-        }}
         initialReviews={initialReviews}
         initialSummary={initialSummary}
       />
