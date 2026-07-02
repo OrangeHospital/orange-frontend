@@ -213,7 +213,7 @@ export default function HeroSlider({ data, settings }: HeroSliderProps) {
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.35 }}
                   >
-                    <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[12px] tracking-wider uppercase font-semibold bg-white border border-[color:var(--line)] shadow-sm">
+                    <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-[12px] tracking-wider uppercase font-bold bg-white border border-[color:var(--line)] shadow-sm">
                       <span className="w-2 h-2 rounded-full bg-[color:var(--leaf-500)] animate-pulse" />{" "}
                       {s.badge}
                     </span>
@@ -230,12 +230,12 @@ export default function HeroSlider({ data, settings }: HeroSliderProps) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.55 }}
-              className="font-semibold mt-6 text-[color:var(--ink-900)] text-3xl sm:text-4xl md:text-5xl lg:text-[54px] leading-[1.15]"
+              className=" mt-6 text-[color:var(--ink-900)] text-3xl sm:text-4xl md:text-4xl lg:text-[54px] leading-[1.15]"
             >
               {s.titlePrefix}{" "}
               <span className="relative inline-block mt-1 sm:mt-0">
                 <span
-                  className="relative z-10"
+                  className="relative z-10 font-bold"
                   style={{
                     background: "linear-gradient(120deg,#F26A1B,#D2540F)",
                     WebkitBackgroundClip: "text",
@@ -244,7 +244,7 @@ export default function HeroSlider({ data, settings }: HeroSliderProps) {
                 >
                   {s.titleHighlight}
                 </span>
-                <svg
+                {/* <svg
                   viewBox="0 0 320 16"
                   className="absolute -bottom-2 left-0 w-full"
                   preserveAspectRatio="none"
@@ -257,7 +257,7 @@ export default function HeroSlider({ data, settings }: HeroSliderProps) {
                     strokeLinecap="round"
                     opacity="0.55"
                   />
-                </svg>
+                </svg> */}
               </span>
             </motion.h1>
           </AnimatePresence>

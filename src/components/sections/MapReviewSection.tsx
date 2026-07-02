@@ -134,7 +134,12 @@ export default function MapReviewSection({
   }, []);
 
   useEffect(() => {
+    if (data?.showGoogleReviews === false) {
+      setLoading(false);
+      return;
+    }
     if (initialReviews && initialReviews.length > 0) {
+      setLoading(false);
       return;
     }
     fetch("/api/map-reviews")
@@ -153,7 +158,7 @@ export default function MapReviewSection({
       })
       .catch(() => setError(true))
       .finally(() => setLoading(false));
-  }, [initialReviews]);
+  }, [initialReviews, data?.showGoogleReviews]);
 
   const maxIndex = Math.max(0, reviews.length - cardsVisible);
 
@@ -191,7 +196,7 @@ export default function MapReviewSection({
   const GAP = 24;
 
   return (
-    <section className="py-16 sm:py-20 bg-[#FFF8EE] relative overflow-hidden select-none w-full">
+    <section className="py-16 sm:py-20  relative overflow-hidden select-none w-full">
       <div className="container mx-auto px-4 sm:px-6 max-w-7xl relative z-10">
         {/* Header */}
         <Reveal>
@@ -212,24 +217,26 @@ export default function MapReviewSection({
             )}
 
             {/* Rating summary */}
-            {!loading && (displayRating || reviews.length > 0) && (
-              <div className="flex items-center justify-center gap-3 mt-5">
-                <div className="flex items-center gap-1.5 bg-white border border-slate-100 rounded-full px-4 py-2 shadow-sm">
-                  <Star className="w-4 h-4 fill-[#F97316] text-[#F97316]" />
-                  <span className="font-bold text-slate-800 text-sm">
-                    {displayRating ?? "4.8"}
-                  </span>
-                  <span className="text-slate-400 text-xs">
-                    ({displayTotal} reviews)
-                  </span>
+            {!loading &&
+              (displayRating || reviews.length > 0) &&
+              data?.showGoogleReviews !== false && (
+                <div className="flex items-center justify-center gap-3 mt-5">
+                  <div className="flex items-center gap-1.5 bg-white border border-slate-100 rounded-full px-4 py-2 shadow-sm">
+                    <Star className="w-4 h-4 fill-[#F97316] text-[#F97316]" />
+                    <span className="font-bold text-slate-800 text-sm">
+                      {displayRating ?? "4.8"}
+                    </span>
+                    <span className="text-slate-400 text-xs">
+                      ({displayTotal} reviews)
+                    </span>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
         </Reveal>
 
         {/* Loading state */}
-        {loading && (
+        {loading && data?.showGoogleReviews !== false && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {[1, 2, 3].map((i) => (
               <div
@@ -248,94 +255,97 @@ export default function MapReviewSection({
         )}
 
         {/* Reviews Carousel */}
-        {!loading && !error && reviews.length > 0 && (
-          <Reveal>
-            <div
-              className="relative"
-              onMouseEnter={() => setPaused(true)}
-              onMouseLeave={() => setPaused(false)}
-            >
-              {/* Carousel track — touch swipe support */}
+        {!loading &&
+          !error &&
+          reviews.length > 0 &&
+          data?.showGoogleReviews !== false && (
+            <Reveal>
               <div
-                className="overflow-hidden"
-                ref={carouselRef}
-                onTouchStart={(e: TouchEvent) => {
-                  touchStartX.current = e.touches[0].clientX;
-                  setPaused(true);
-                }}
-                onTouchEnd={(e: TouchEvent) => {
-                  if (touchStartX.current === null) return;
-                  const delta =
-                    touchStartX.current - e.changedTouches[0].clientX;
-                  if (delta > 40)
-                    next(); // swipe left → next
-                  else if (delta < -40) prev(); // swipe right → prev
-                  touchStartX.current = null;
-                  setPaused(false);
-                }}
+                className="relative"
+                onMouseEnter={() => setPaused(true)}
+                onMouseLeave={() => setPaused(false)}
               >
+                {/* Carousel track — touch swipe support */}
                 <div
-                  className="flex transition-transform duration-500 ease-in-out"
-                  style={{
-                    gap: `${GAP}px`,
-                    transform: `translateX(calc(-${currentIndex} * (100% / ${cardsVisible} + ${GAP / cardsVisible}px)))`,
+                  className="overflow-hidden"
+                  ref={carouselRef}
+                  onTouchStart={(e: TouchEvent) => {
+                    touchStartX.current = e.touches[0].clientX;
+                    setPaused(true);
+                  }}
+                  onTouchEnd={(e: TouchEvent) => {
+                    if (touchStartX.current === null) return;
+                    const delta =
+                      touchStartX.current - e.changedTouches[0].clientX;
+                    if (delta > 40)
+                      next(); // swipe left → next
+                    else if (delta < -40) prev(); // swipe right → prev
+                    touchStartX.current = null;
+                    setPaused(false);
                   }}
                 >
-                  {reviews.map((review, idx) => (
-                    <div
-                      key={idx}
-                      style={{
-                        flex: `0 0 calc(${100 / cardsVisible}% - ${(GAP * (cardsVisible - 1)) / cardsVisible}px)`,
-                      }}
-                    >
-                      <ReviewCard review={review} />
-                    </div>
-                  ))}
+                  <div
+                    className="flex transition-transform duration-500 ease-in-out"
+                    style={{
+                      gap: `${GAP}px`,
+                      transform: `translateX(calc(-${currentIndex} * (100% / ${cardsVisible} + ${GAP / cardsVisible}px)))`,
+                    }}
+                  >
+                    {reviews.map((review, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          flex: `0 0 calc(${100 / cardsVisible}% - ${(GAP * (cardsVisible - 1)) / cardsVisible}px)`,
+                        }}
+                      >
+                        <ReviewCard review={review} />
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Nav buttons — desktop only */}
-              {reviews.length > cardsVisible && (
-                <>
-                  <button
-                    onClick={prev}
-                    disabled={currentIndex === 0}
-                    aria-label="Previous reviews"
-                    className="hidden sm:flex absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-md items-center justify-center text-slate-600 hover:bg-[color:var(--primary)] hover:text-white hover:border-[color:var(--primary)] transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed z-10"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  <button
-                    onClick={next}
-                    disabled={currentIndex >= maxIndex}
-                    aria-label="Next reviews"
-                    className="hidden sm:flex absolute -right-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-md items-center justify-center text-slate-600 hover:bg-[color:var(--primary)] hover:text-white hover:border-[color:var(--primary)] transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed z-10"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </>
-              )}
-
-              {/* Dots — always visible for position indicator */}
-              {reviews.length > cardsVisible && (
-                <div className="flex justify-center gap-2 mt-6">
-                  {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+                {/* Nav buttons — desktop only */}
+                {reviews.length > cardsVisible && (
+                  <>
                     <button
-                      key={i}
-                      onClick={() => setCurrentIndex(i)}
-                      aria-label={`Go to slide ${i + 1}`}
-                      className={`rounded-full transition-all duration-300 ${
-                        i === currentIndex
-                          ? "w-6 h-2 bg-[color:var(--primary)]"
-                          : "w-2 h-2 bg-slate-300 hover:bg-slate-400"
-                      }`}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
-          </Reveal>
-        )}
+                      onClick={prev}
+                      disabled={currentIndex === 0}
+                      aria-label="Previous reviews"
+                      className="hidden sm:flex absolute -left-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-md items-center justify-center text-slate-600 hover:bg-[color:var(--primary)] hover:text-white hover:border-[color:var(--primary)] transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed z-10"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      onClick={next}
+                      disabled={currentIndex >= maxIndex}
+                      aria-label="Next reviews"
+                      className="hidden sm:flex absolute -right-5 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white border border-slate-200 shadow-md items-center justify-center text-slate-600 hover:bg-[color:var(--primary)] hover:text-white hover:border-[color:var(--primary)] transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed z-10"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </>
+                )}
+
+                {/* Dots — always visible for position indicator */}
+                {reviews.length > cardsVisible && (
+                  <div className="flex justify-center gap-2 mt-6">
+                    {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setCurrentIndex(i)}
+                        aria-label={`Go to slide ${i + 1}`}
+                        className={`rounded-full transition-all duration-300 ${
+                          i === currentIndex
+                            ? "w-6 h-2 bg-[color:var(--primary)]"
+                            : "w-2 h-2 bg-slate-300 hover:bg-slate-400"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </Reveal>
+          )}
       </div>
     </section>
   );

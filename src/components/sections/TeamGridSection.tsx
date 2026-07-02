@@ -136,7 +136,7 @@ export default function TeamGridSection({ data }: TeamGridSectionProps) {
         <Reveal>
           <div className="text-center mb-16 max-w-3xl mx-auto">
             {data.subtitle && (
-              <span className="text-[color:var(--primary)] font-bold text-xs uppercase tracking-[0.18em] mb-3 block">
+              <span className="text-[color:var(--primary)] font-semibold text-md tracking-[0.10em] mb-3 block">
                 — {data.subtitle}
               </span>
             )}

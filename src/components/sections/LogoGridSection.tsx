@@ -72,11 +72,16 @@ export default function LogoGridSection({ data }: LogoGridSectionProps) {
   }
 
   // Duplicate elements to repeat and fill horizontal space dynamically
-  const repeatCount = Math.max(2, Math.ceil(30 / itemsList.length));
-  const displayItems = Array(repeatCount).fill(itemsList).flat();
-  const displayItemsReversed = Array(repeatCount)
+  // We compute baseCount to ensure the items cover at least the screen width,
+  // then duplicate the track exactly once to ensure a 100% seamless loop at -50%.
+  const baseCount = Math.ceil(15 / itemsList.length);
+  const baseItems = Array(baseCount).fill(itemsList).flat();
+  const displayItems = [...baseItems, ...baseItems];
+
+  const baseItemsReversed = Array(baseCount)
     .fill([...itemsList].reverse())
     .flat();
+  const displayItemsReversed = [...baseItemsReversed, ...baseItemsReversed];
 
   // Resolve description
   const descriptionText =
@@ -105,10 +110,12 @@ export default function LogoGridSection({ data }: LogoGridSectionProps) {
           }
         }
         .logo-animate-ltr {
-          animation: logo-marquee-ltr 38s linear infinite;
+          animation: logo-marquee-ltr 75s linear infinite;
+          will-change: transform;
         }
         .logo-animate-rtl {
-          animation: logo-marquee-rtl 38s linear infinite;
+          animation: logo-marquee-rtl 75s linear infinite;
+          will-change: transform;
         }
         .hover-pause:hover .logo-animate-ltr,
         .hover-pause:hover .logo-animate-rtl {
@@ -135,7 +142,7 @@ export default function LogoGridSection({ data }: LogoGridSectionProps) {
 
         {/* Right Column: horizontal marquee */}
         <div
-          className="relative overflow-hidden py-4 hover-pause flex flex-col gap-3"
+          className="relative w-full min-w-0 overflow-hidden py-4 hover-pause flex flex-col gap-3"
           style={{
             maskImage:
               "linear-gradient(90deg, transparent, black 12%, black 88%, transparent)",
@@ -148,15 +155,15 @@ export default function LogoGridSection({ data }: LogoGridSectionProps) {
             {displayItems.map((item, idx) => (
               <div
                 key={`ltr-${idx}`}
-                className="shrink-0 inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-[color:var(--cream)] border border-[color:var(--line)] text-[14px] font-semibold text-[color:var(--ink-700)] select-none min-h-[58px]"
+                className="shrink-0 inline-flex items-center px-6 py-3.5 rounded-2xl bg-[color:var(--cream)] border border-[color:var(--line)] text-[14px] font-semibold text-[color:var(--ink-700)] select-none min-h-[58px]"
               >
-                <span className="w-2.5 h-2.5 rounded-full bg-[color:var(--leaf-500)]" />
                 {item.logoSrc ? (
                   <Image
                     src={item.logoSrc}
                     alt={item.alt}
                     width={140}
                     height={40}
+                    loading="eager"
                     className="h-10 w-auto object-contain"
                   />
                 ) : (
@@ -171,15 +178,15 @@ export default function LogoGridSection({ data }: LogoGridSectionProps) {
             {displayItemsReversed.map((item, idx) => (
               <div
                 key={`rtl-${idx}`}
-                className="shrink-0 inline-flex items-center gap-3 px-6 py-3.5 rounded-2xl bg-white border border-[color:var(--line)] text-[14px] font-semibold text-[color:var(--ink-700)] select-none min-h-[58px]"
+                className="shrink-0 inline-flex items-center px-6 py-3.5 rounded-2xl bg-white border border-[color:var(--line)] text-[14px] font-semibold text-[color:var(--ink-700)] select-none min-h-[58px]"
               >
-                <span className="w-2.5 h-2.5 rounded-full bg-[color:var(--orange-500)]" />
                 {item.logoSrc ? (
                   <Image
                     src={item.logoSrc}
                     alt={item.alt}
                     width={140}
                     height={40}
+                    loading="eager"
                     className="h-10 w-auto object-contain"
                   />
                 ) : (
