@@ -6,8 +6,19 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 
+interface MenuItemData {
+  menuName?: string;
+  link?: string;
+  label?: string;
+  href?: string;
+  status?: string;
+  isClickable?: boolean;
+  children?: MenuItemData[];
+  dropdownItems?: MenuItemData[];
+}
+
 interface HeaderProps {
-  menu?: Menu[];
+  menu?: MenuItemData[];
 }
 
 export default function Header({ menu }: HeaderProps) {
@@ -27,36 +38,87 @@ export default function Header({ menu }: HeaderProps) {
     };
   }, [mobileMenuOpen]);
 
+  // Helper function to check if item status is active
+  const isActiveStatus = (status: string | undefined | null): boolean => {
+    if (status === undefined || status === null) return true;
+    if (typeof status === "string") return status.toLowerCase() === "active";
+    return true;
+  };
+
   // Navigation items loaded dynamically from Sanity if available, otherwise fallback
-  const navItems =
+  const rawMenuItems =
     menu && menu.length > 0
-      ? menu.map((item: Menu) => ({
-          label: item.menuName || "",
-          href: item.link || "#",
-          hasDropdown: Array.isArray(item.children) && item.children.length > 0,
-          dropdownItems: Array.isArray(item.children)
-            ? item.children.map((child: Menu) => ({
-                label: child.menuName || "",
-                href: child.link || "#",
-              }))
-            : [],
-        }))
+      ? menu
       : [
-          { label: "Home", href: "/" },
-          { label: "About", href: "/about" },
-          { label: "Doctors", href: "/doctors" },
-          { label: "Facilities", href: "/facilities" },
+          { label: "Home", href: "/", isClickable: true, status: "active" },
+          {
+            label: "About",
+            href: "/about",
+            isClickable: true,
+            status: "active",
+          },
+          {
+            label: "Doctors",
+            href: "/doctors",
+            isClickable: true,
+            status: "active",
+          },
+          {
+            label: "Facilities",
+            href: "/facilities",
+            isClickable: true,
+            status: "active",
+          },
           {
             label: "Patient Reviews",
             href: "/testimonial",
-            hasDropdown: true,
+            isClickable: true,
+            status: "active",
             dropdownItems: [
-              { label: "Testimonial", href: "/testimonial" },
-              { label: "Success Stories", href: "/success-stories" },
+              {
+                label: "Testimonial",
+                href: "/testimonial",
+                isClickable: true,
+                status: "active",
+              },
+              {
+                label: "Success Stories",
+                href: "/success-stories",
+                isClickable: true,
+                status: "active",
+              },
             ],
           },
-          { label: "Contact", href: "/contact" },
+          {
+            label: "Contact",
+            href: "/contact",
+            isClickable: true,
+            status: "active",
+          },
         ];
+
+  const navItems = rawMenuItems
+    .filter((item: MenuItemData) => isActiveStatus(item.status))
+    .map((item: MenuItemData) => {
+      const rawChildren = item.children || item.dropdownItems || [];
+      const activeChildren = rawChildren
+        .filter((child: MenuItemData) => isActiveStatus(child.status))
+        .map((child: MenuItemData) => ({
+          label: child.menuName || child.label || "",
+          href: child.link || child.href || "#",
+          status: child.status ?? "active",
+          isClickable: child.isClickable ?? true,
+        }));
+
+      return {
+        label: item.menuName || item.label || "",
+        href: item.link || item.href || "#",
+        status: item.status ?? "active",
+        isClickable: item.isClickable ?? true,
+        hasDropdown: activeChildren.length > 0,
+        dropdownItems: activeChildren,
+      };
+    });
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-100 shadow-none">
@@ -94,30 +156,48 @@ export default function Header({ menu }: HeaderProps) {
                 key={item.label}
                 className="relative group flex items-center h-full"
               >
-                <Link
-                  href={item.href}
-                  className={`relative flex items-center gap-1.5 py-2 text-[15px] font-semibold tracking-wide transition-colors duration-300 outline-none focus:outline-none focus-visible:outline-none select-none border-0 ${
-                    isActive
-                      ? "text-slate-900"
-                      : "text-slate-500 hover:text-[#F7A707]"
-                  }`}
-                  style={{ outline: "none", border: "none", boxShadow: "none" }}
-                >
-                  <span>{item.label}</span>
-                  {item.hasDropdown && (
-                    <ChevronDown
-                      className={`h-4 w-4 text-[#F7A707] transition-transform duration-200 group-hover:rotate-180`}
-                    />
-                  )}
-                  {/* Modern 2026 Underline: Sleek glowing rounded pill, positioned closer to text */}
-                  <span
-                    className={`absolute -bottom-1 left-1/2 -translate-x-1/2 h-[3px] rounded-full bg-[#F7A707] transition-all duration-300 ${
+                {item.isClickable ? (
+                  <Link
+                    href={item.href}
+                    className={`relative flex items-center gap-1.5 py-2 text-[15px] font-semibold tracking-wide transition-colors duration-300 outline-none focus:outline-none focus-visible:outline-none select-none border-0 ${
                       isActive
-                        ? "w-6 opacity-100 shadow-[0_0_12px_rgba(247,167,7,0.7)]"
-                        : "w-0 opacity-0 group-hover:w-4 group-hover:opacity-60"
+                        ? "text-slate-900"
+                        : "text-slate-500 hover:text-[#F7A707]"
                     }`}
-                  />
-                </Link>
+                    style={{
+                      outline: "none",
+                      border: "none",
+                      boxShadow: "none",
+                    }}
+                  >
+                    <span>{item.label}</span>
+                    {item.hasDropdown && (
+                      <ChevronDown
+                        className={`h-4 w-4 text-[#F7A707] transition-transform duration-200 group-hover:rotate-180`}
+                      />
+                    )}
+                    {/* Modern Underline: Sleek glowing rounded pill */}
+                    <span
+                      className={`absolute -bottom-1 left-1/2 -translate-x-1/2 h-[3px] rounded-full bg-[#F7A707] transition-all duration-300 ${
+                        isActive
+                          ? "w-6 opacity-100 shadow-[0_0_12px_rgba(247,167,7,0.7)]"
+                          : "w-0 opacity-0 group-hover:w-4 group-hover:opacity-60"
+                      }`}
+                    />
+                  </Link>
+                ) : (
+                  <span
+                    className="relative flex items-center gap-1.5 py-2 text-[15px] font-semibold tracking-wide text-slate-400 cursor-not-allowed select-none border-0"
+                    title={`${item.label} (Disabled)`}
+                  >
+                    <span>{item.label}</span>
+                    {item.hasDropdown && (
+                      <ChevronDown
+                        className={`h-4 w-4 text-slate-400 transition-transform duration-200 group-hover:rotate-180`}
+                      />
+                    )}
+                  </span>
+                )}
 
                 {/* Dropdown Menu */}
                 {item.hasDropdown && item.dropdownItems && (
@@ -125,6 +205,18 @@ export default function Header({ menu }: HeaderProps) {
                     <div className="py-2 flex flex-col">
                       {item.dropdownItems.map((subItem) => {
                         const isSubActive = pathname === subItem.href;
+
+                        if (!subItem.isClickable) {
+                          return (
+                            <span
+                              key={subItem.label}
+                              className="relative pl-7 pr-5 py-3 text-sm font-semibold text-slate-400 cursor-not-allowed text-left flex items-center select-none"
+                            >
+                              <span>{subItem.label}</span>
+                            </span>
+                          );
+                        }
+
                         return (
                           <Link
                             key={subItem.label}
@@ -266,6 +358,18 @@ export default function Header({ menu }: HeaderProps) {
                     >
                       {item.dropdownItems.map((subItem) => {
                         const isSubActive = pathname === subItem.href;
+
+                        if (!subItem.isClickable) {
+                          return (
+                            <span
+                              key={subItem.label}
+                              className="px-4 py-3.5 rounded-md text-sm font-semibold text-slate-400 cursor-not-allowed select-none"
+                            >
+                              {subItem.label}
+                            </span>
+                          );
+                        }
+
                         return (
                           <Link
                             key={subItem.label}
@@ -283,6 +387,17 @@ export default function Header({ menu }: HeaderProps) {
                       })}
                     </div>
                   </div>
+                );
+              }
+
+              if (!item.isClickable) {
+                return (
+                  <span
+                    key={item.label}
+                    className="px-4 py-3 rounded-lg text-base font-semibold text-slate-400 cursor-not-allowed select-none"
+                  >
+                    {item.label}
+                  </span>
                 );
               }
 
